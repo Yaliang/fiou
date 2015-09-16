@@ -1,5 +1,48 @@
 Parse.initialize("ZnLjW6xuqieYfVfFJZB5nuRONBybVGCjJTS0T8El", "rci8OKWaBeYZSaC6kAwLr30RhmmFFPUWrDCe1ZqG");
 
+user = {
+	autologin: function() {
+		var currentUser = Parse.User.current()
+
+		if (currentUser) {
+			pt.loadPage("home")
+		}
+	},
+	login: function() {
+		var myname = $("#username").val()
+		var mypass = $("#password").val()
+		Parse.User.logIn(myname, mypass, {
+			success: function(user) {
+				$("#loginerror").html("")
+				pt.loadPage("home")
+			},
+			error: function(error) {
+				$("#loginerror").html(JSON.parse(JSON.stringify(error)).message)
+			}
+		});
+	},
+	signup: function() {
+		var myname = $("#set-username").val()
+		var mypass = $("#set-password").val()
+
+		var user = new Parse.User()
+		user.set("username", myname)
+		user.set("password", mypass)
+		user.set("email", myname)
+
+		user.signUp(null, {
+			success: function(user) {
+				$("#signuperror").html("")
+				pt.loadPage("home")
+			},
+			error: function(user, error) {
+				console.log(error)
+				$("#signuperror").html(JSON.parse(JSON.stringify(error)).message)
+			}
+		})
+	}
+}
+
 ajaxloader = {
 	get : function(id) {
 		var href = "./"+id+".html"
@@ -48,7 +91,7 @@ ajaxloader = {
 		obj.contentAttr = {}
 		var contentAttrOverscroll = data.substring(data.indexOf("<contentAttrOverscroll>") + 23, data.indexOf("</contentAttrOverscroll>"))
 		if (contentAttrOverscroll != null) {
-			obj.contentAttr["overscroll"] = contentAttrOverscroll
+			obj.contentAttr.overscroll = contentAttrOverscroll == "true"
 		}
 
 		var footer = data.substring(data.indexOf("<footer>") + 8, data.indexOf("</footer>"))
