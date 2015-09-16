@@ -143,7 +143,7 @@
 		 * @return {[type]}                             [description]
 		 */
 		if (window.location.hash.length == 0) {
-			this.loadPage()
+			this.loadPage(options.initPage)
 		} else {
 			this.loadPage(window.location.hash.slice(1))
 		}
@@ -225,7 +225,8 @@
 		var contentAttr = obj.contentAttr || {}
 
 		var contentAttrOverScroll = contentAttr.overscroll || false
-		if (contentAttrOverScroll) {
+
+		if (contentAttrOverScroll == true) {
 			newPage.children(".ctrl-page-content").attr("data-overscroll", "true")
 		}
 
@@ -362,17 +363,18 @@
 	 */
 	pageTransition.prototype.touchAnimateStop = function() {
 		if (typeof this.nowElement != "undefined" && this.nowElement.length > 0) {
-			this.nowElement.stop()
+			this.nowElement.finish()
 			this.nowElement.css("left","")
 			this.nowElement.css("width","")
 		}
 
 		if (typeof this.prevElement != "undefined" && this.prevElement.length > 0) {
-			this.prevElement.stop()
+			this.prevElement.finish()
 			this.prevElement.css("transform", "").css("-webkit-transform", "").css("-moz-transform", "")
 			this.prevElement.attr("data-scale","")
 			this.prevElement.css("opacity", "")
 			this.prevElement.css("display", "")
+			this.prevElement.css("left","")
 		}
 	}
 
@@ -442,9 +444,6 @@
 	 * @return {[type]}       [description]
 	 */
 	pageTransition.prototype.touchXcontrollerEndEvent = function(event) {
-		// if (parseInt(event.originalEvent.changedTouches[0].identifier) != parseInt(this.nowFinger)) {
-		// 	return 
-		// }
 
 		if ((( typeof $(event.target).attr("data-nav") != "undefined" && $(event.target).attr("data-nav").toLowerCase() == "back") || parseFloat(this.nowElement.css("left")) > 0) && this.prevElement.length > 0) {
 			var distance = parseFloat(this.nowElement.css("left"))
@@ -526,7 +525,6 @@
 			this.touchAnimateStop()
 		}
 
-		this.xblock = false
 	}
 
 	/**
@@ -559,7 +557,7 @@
 			var scrollHeight = this.scrollElement[0].scrollHeight
 			var clippedHeight = this.scrollElement.outerHeight()
 			if (scrollHeight > clippedHeight) {
-				this.scrollElement.prev().stop()
+				this.scrollElement.prev().finish()
 				this.scrollElement.prev().css("opacity","")
 				this.scrollElement.prev().show()
 			}
@@ -572,7 +570,7 @@
 	 */
 	pageTransition.prototype.touchHideScrollBar = function() {
 		if (this.scrollElement.prev().hasClass("touch-scroll-bar")) {
-			this.scrollElement.prev().stop()
+			this.scrollElement.prev().finish()
 			this.scrollElement.prev().fadeOut()
 		}
 	}
@@ -606,7 +604,7 @@
 		var currentCssTop = parseFloat(this.scrollElement.css("top"))
 		var newScrollToTop = scrollToTop
 		var newScrollToBottom = scrollToBottom
-		var overscrollable = this.scrollElement.attr("data-overscroll").toLowerCase() == "true"
+		var overscrollable = (this.scrollElement.attr("data-overscroll") || "").toLowerCase() == "true"
 		var displayRate = 1.0 / (1.0 + 25.0 * Math.abs(currentCssTop) / clippedHeight)
 		var loopnum = 0
 
@@ -706,7 +704,7 @@
 
 			/** clear previous animation inference */
 			if (typeof this.scrollElement != "undefined" && this.scrollElement != null && this.scrollElement.length > 0) {
-				// this.scrollElement.stop()
+				// this.scrollElement.finish()
 				// this.scrollElement.css("top", "0")
 
 				this.scrollElement.unbind("smooth-scroll-done")
@@ -1015,19 +1013,15 @@
 
 		/** rebind the touch events */
 		$(this.selector).bind("touchstart", this, function(event) {
-			event.preventDefault()
 			event.data.touchOnStart(event)
 		})
 		$(this.selector).bind("touchmove", this, function(event) {
-			event.preventDefault()
 			event.data.touchOnMove(event)
 		})
 		$(this.selector).bind("touchend", this, function(event) {
-			event.preventDefault()
 			event.data.touchOnEnd(event)
 		})
 		$(this.selector).bind("touchcancel", this, function(event) {
-			event.preventDefault()
 			event.data.touchOnEnd(event)
 		})
 	}

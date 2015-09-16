@@ -98,3 +98,7 @@ textarea {
 .banner-front {
     z-index: 99;
 }
+
+.extra-small {
+    font-size: 62%;
+}

@@ -1,16 +1,18 @@
-<title>Login</title>
+<title>FIOU</title>
 <pageid>login</pageid>
 
 <header>
-	<h1>Login</h1>
-	<a href="#" data-href="./signup.html" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all">Sign Up</a>
+	<h1>FIOU</h1>
+	<a href="#" data-href="signup" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all">Sign Up</a>
 </header>
 <main>
 	<label for="username" class="ui-hidden-accessible">Username</label>
-	<input type="text" name="username" id="username" placeholder="Username" value="" autocomplete="off">
+	<input type="text" name="username" id="username" placeholder="Username" value="" autocomplete="off" data-clear-btn="true">
 	<label for="password" class="ui-hidden-accessible">Password</label>
-	<input type="password" name="password" id="password" placeholder="Password" value="" autocomplete="off">
+	<input type="password" name="password" id="password" placeholder="Password" value="" autocomplete="off" data-clear-btn="true">
+	<div style="color:red" id="loginerror"></div>
+	<button class="ui-btn ui-corner-all" onclick="user.login()">Login</button>
 </main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
 <footer>
-	<h1>Footer</h1>
 </footer>
