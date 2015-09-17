@@ -23,11 +23,18 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
     <link rel="stylesheet" href="./index.css" />
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript">
+        $(document).bind("mobileinit", function(){
+            $.mobile.ignoreContentEnabled = true;
+        });
+    </script>
+
+
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="./script/bootstrap/css/bootstrap.min.css">
     <!-- Optional theme -->
-    <link rel="stylesheet" href="./script/bootstrap/css/bootstrap-theme.min.css">
+    <!-- <link rel="stylesheet" href="./script/bootstrap/css/bootstrap-theme.min.css"> -->
     <!-- Latest compiled and minified JavaScript -->
     <script src="./script/bootstrap/js/bootstrap.min.js"></script>
     <script src="./script/fastclick-master/lib/fastclick.js"></script>
@@ -46,12 +53,19 @@
     <script type="text/javascript">
         window.FastClick.attach(document.body)
 
+        $(document).bind('mobileinit',function(){
+            $.mobile.page.prototype.options.keepNative = "select, input";
+        });
+
+        $(document).bind("mobileinit", function(){
+            $.mobile.ignoreContentEnabled = true;
+        });
+
         pt = pageTransition.init({
             ajaxloader: ajaxloader,
             initPage: "login"
         })
 
-        user.autologin()
     </script>
 
 </body>
