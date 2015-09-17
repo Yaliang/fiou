@@ -1,0 +1,64 @@
+<title>FIOU</title>
+<pageid>scan</pageid>
+
+<header>
+	<h1>FIOU</h1>
+	<a class="header-btn" href='#' data-href='' data-nav='back'>
+		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>Back
+	</a>
+</header>
+<main>
+	<div class="form-group">
+		<div class="input-group" data-enhance="false">
+			<span class="input-group-addon" id="qrcode-addon1">
+				<span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span>
+			</span>
+			<input type="file" class="form-control" id="scan-file" placeholder="QRcode" aria-describedby="qrcode-addon1" data-enhance="false" onchange="qrdecoder.extract()">
+		</div>
+	</div>
+
+	<div class="panel panel-default small">
+		<div class="panel-heading">result</div>
+		<div class="panel-body" id="scan-result">
+		</div>
+	</div>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/grid.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/version.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/detector.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/formatinf.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/errorlevel.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/bitmat.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/datablock.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/bmparser.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/datamask.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/rsdecoder.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/gf256poly.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/gf256.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/decoder.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/qrcode.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/findpat.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/alignpat.js"></script>
+	<script type="text/javascript" src="./script/jsqrcode-master/src/databr.js"></script>
+	<script type="text/javascript">
+		qrdecoder = {
+			extract: function() {
+				var reader = new FileReader();
+				// console.log(document.getElementById('scan-file'))
+				var f = document.getElementById('scan-file').files[0]
+				qrcode.callback = function(result) {
+					$("#scan-result").html(result)
+				}
+
+				reader.onloadend = function() {
+					qrcode.decode(reader.result);
+				}
+
+				reader.readAsDataURL(f);
+			}
+		}
+		
+	</script>
+</footer>
