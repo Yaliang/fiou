@@ -6,6 +6,8 @@ user = {
 
 		if (currentUser) {
 			pt.loadPage("home")
+		} else {
+			pt.loadPage("login")
 		}
 	},
 	login: function() {

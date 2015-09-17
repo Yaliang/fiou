@@ -293,12 +293,19 @@
 				var obj = a.ajaxloader.obj
 				var newPage = null
 
+				if (a.pageStack.indexOf(obj.pageId) == a.pageStack.length-1) {
+					a.pageStack.splice(a.pageStack.indexOf(obj.pageId), 1)
+				}
 				a.pageStack.push(obj.pageId)
+
+				/** print current page stack */
+				// console.log(a.pageStack)
 
 				if ($("#"+id).length == 0) {
 					newPage = a.createPage(obj)
 				} else {
 					newPage = $("#"+id)
+					$("body").append(newPage)
 				}
 
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", "#"+obj.pageId, {
@@ -320,6 +327,7 @@
 
 		/** maintain the pageStack */
 		this.popPage()
+		console.log(this.pageStack)
 
 		/**
 		 * manually change the active page class.
@@ -329,9 +337,6 @@
 		this.nowElement.removeClass("ui-page-active")
 		this.prevElement.addClass("ui-page-active")
 
-		/** pop a history state of the previous page */
-		window.history.back()
-
 		/**
 		 * remove the element, when the page set need to removed when it is pop from history stack
 		 * or request a force reload when it's reappeared
@@ -339,7 +344,12 @@
 		if (this.nowElement.attr("data-remove") == "forever" || this.nowElement.attr("data-reload") == "true") {
 			this.pageTrash.push(this.nowElement)
 			this.nowElement.remove()
+		} else {
+			$("body").append(this.prevElement)
 		}
+
+		/** pop a history state of the previous page */
+		window.history.back()
 
 	}
 
