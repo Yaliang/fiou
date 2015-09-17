@@ -40,6 +40,7 @@
     <script src="./script/fastclick-master/lib/fastclick.js"></script>
     <script src="./script/j2m/script/pageTransition.js"></script>
     <script type="text/javascript" src="./script/parse/parse-1.6.0.min.js"></script>
+    <script type="text/javascript" src="./script/qrcodejs/qrcode.min.js"></script>
     <script type="text/javascript" src="./index.js"></script>
 </head>
 
@@ -52,14 +53,6 @@
 
     <script type="text/javascript">
         window.FastClick.attach(document.body)
-
-        $(document).bind('mobileinit',function(){
-            $.mobile.page.prototype.options.keepNative = "select, input";
-        });
-
-        $(document).bind("mobileinit", function(){
-            $.mobile.ignoreContentEnabled = true;
-        });
 
         pt = pageTransition.init({
             ajaxloader: ajaxloader,

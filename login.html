@@ -24,8 +24,9 @@
 			</div>
 		</div>
 
-		<div style="color:red" id="loginerror"></div>
-		<button type="button" class="btn btn-primary btn-block" id="login-btn" onclick="user.login()" data-enhance="false">
+		<div id="loginerror"></div>
+
+		<button type="submit" class="btn btn-primary btn-block" id="login-btn" onclick="user.login()" data-enhance="false">
 			<span class="small" style="line-height:2">Login</span>
 		</button>
 
@@ -40,10 +41,11 @@
 		$("#login-form").bind("submit", function(event) {
 			console.log("submit event on form")
 			event.preventDefault()
-			user.login()
 		})
 
 		user.autologin()
+
+		console.log("run")
 
 	</script>
 </footer>

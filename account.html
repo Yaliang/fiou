@@ -1,0 +1,35 @@
+<title>FIOU</title>
+<pageid>account</pageid>
+
+<header>
+	<h1>FIOU</h1>
+	<a class="header-btn" href='#' data-href='' data-nav='back'>
+		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>Back
+	</a>
+</header>
+<main>
+	<div class="panel panel-default small">
+		<div class="panel-heading">Username</div>
+		<div class="panel-body" id="account-username">
+		</div>
+	</div>
+	<div class="panel panel-default small">
+		<div class="panel-heading">QRcode</div>
+		<div class="panel-body" id="account-qrcode">
+		</div>
+	</div>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<script type="text/javascript">
+		user.autologin({
+			dest: "account"
+		})
+
+		$("#account-username").html(user.username)
+		$("#account-userid").html(user.id)
+		qrcoder = new QRCode("account-qrcode")
+
+		qrcoder.makeCode("appid="+Parse.applicationId+"|userid="+user.id)
+	</script>
+</footer>
