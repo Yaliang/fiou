@@ -5,7 +5,7 @@
 	<h1>FIOU</h1>
 </header>
 <main>
-	<form id="sign-form" data-enhance="false">
+	<form id="signup-form" data-enhance="false">
 		<div class="form-group">
 			<div class="input-group" data-enhance="false">
 				<span class="input-group-addon" id="signup-username-addon1">
@@ -24,8 +24,8 @@
 			</div>
 		</div>
 
-		<div style="color:red" id="loginerror"></div>
-		<button type="button" class="btn btn-primary btn-block" id="signup-btn" onclick="user.signup()" data-enhance="false">
+		<div id="signuperror"></div>
+		<button type="submit" class="btn btn-primary btn-block" id="signup-btn" onclick="user.signup()" data-enhance="false">
 			<span class="small" style="line-height:2">Sign up</span>
 		</button>
 
@@ -41,7 +41,6 @@
 		$("#signup-form").bind("submit", function(event) {
 			console.log("submit event on form")
 			event.preventDefault()
-			user.signup()
 		})
 
 	</script>

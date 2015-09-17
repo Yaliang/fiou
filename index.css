@@ -30,3 +30,9 @@
     color:#fff;
     background-color:#563d7c;
 }
+
+.header-btn {
+    border: 0 solid #fff;
+    box-shadow: none;
+    background-color: rgba(0,0,0,0)!important;
+}

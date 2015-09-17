@@ -36,8 +36,23 @@
 			</div>
 			<div class="text-center extra-small">Scan</div>
 		</div>
+		<div class="col-xs-3 home-body-pad" onclick="pt.loadPage('account')">
+			<div class="text-center">
+				<span class="glyphicon glyphicon-info-sign text-center" aria-hidden="true"></span>
+			</div>
+			<div class="text-center extra-small">Account</div>
+		</div>
+		<div class="col-xs-3 home-body-pad" onclick="user.logout()">
+			<div class="text-center">
+				<span class="glyphicon glyphicon-log-out text-center" aria-hidden="true"></span>
+			</div>
+			<div class="text-center extra-small">Logout</div>
+		</div>
 	</div>
 </main>
 <contentAttrOverscroll>true</contentAttrOverscroll>
 <footer>
+	<script type="text/javascript">
+		user.autologin()
+	</script>
 </footer>
