@@ -313,7 +313,7 @@
 				} );
 
 				if (a.ajaxloader.callback) {
-					$("body").trigger("ajaxloader-callback")
+					a.ajaxloader.callback()
 				}
 
 			}

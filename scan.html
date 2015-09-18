@@ -70,12 +70,11 @@
 			reaction: function(data) {
 				if (data.indexOf("appid="+Parse.applicationId+"|userid=") == 0) {
 					var userid = data.slice(("appid="+Parse.applicationId+"|userid=").length, data.length)
-					ajaxloader.callback = true
-					$("body").unbind("ajaxloader-callback").bind("ajaxloader-callback", userid, function(event) {
-						userInfoJS.loadUserById(event.data)
+					ajaxloader.callbackData = userid
+					ajaxloader.callback = function() {
+						userInfoJS.loadUserById(ajaxloader.callbackData)
 						ajaxloader.callback = false
-						$("body").unbind("ajaxloader-callback")
-					})
+					}
 					pt.loadPage("userInfo")
 				}
 			}

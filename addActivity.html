@@ -1,0 +1,255 @@
+<title>FIOU</title>
+<pageid>addActivity</pageid>
+
+<header>
+	<h1>FIOU</h1>
+</header>
+<main>
+	<form id="add-activity-form" data-enhance="false">
+		<div class="form-group">
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="activity-description-addon1">
+					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+				</span>
+				<input type="text" class="form-control" id="activity-description" placeholder="Short Description/Note" aria-describedby="activity-description-addon1" data-enhance="false">
+			</div>
+		</div>
+
+		<div class="form-group iou-form-empty" style="display:none">
+			<p style="margin: 0; text-align: right;">
+				<span class="glyphicon glyphicon-remove" id="remove-btn" aria-hidden="true"></span>
+			</p>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-payer-addon">
+					<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
+				</span>
+				<input type="text" class="form-control" id="record-payer" placeholder="Payer" readOnly="readOnly" aria-describedby="record-payer-addon" data-enhance="false">
+			</div>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-amount-addon">
+					<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+				</span>
+				<input type="number" step="0.01" min="0.00" class="form-control" id="record-amount" placeholder="0.00" aria-describedby="record-payer-addon" data-enhance="false">
+			</div>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-borrower-addon">
+					<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+				</span>
+				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Bill" readOnly="readOnly" aria-describedby="record-borrower-addon" data-enhance="false">
+			</div>
+		</div>
+
+		<div id="end-of-list"></div>
+
+		<button type="button" class="btn btn-default btn-block" id="add-record-btn" onclick="activity.addEmptyRecord()" data-enhance="false">
+			<span class="small" style="line-height:2">Additional IOU in Activity</span>
+		</button>
+	</form>
+
+	<div class="panel panel-default add-activity-summary" style="display:none" data-enhance="false">
+	</div>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<div style="margin: 0 1em; padding: 0.5em 0">
+		<div class="row add-activity-next">
+			<button type="button" class="col-xs-offset-3 col-xs-6 btn btn-primary" id="next-activity-btn" onclick="activity.summary()" data-enhance="false">
+				<span class="small">Next</span>
+			</button>
+		</div>
+		<div class="row add-activity-confirm" style="display:none">
+			<button type="button" class="col-xs-offset-1 col-xs-4 btn btn-default" id="back-activity-btn" onclick="activity.back()" data-enhance="false">
+				<span class="small">Back</span>
+			</button>
+			<button type="button" class="col-xs-offset-2 col-xs-4 btn btn-primary" id="confirm-activity-btn" onclick="activity.confirm()" data-enhance="false">
+				<span class="small">Confirm</span>
+			</button>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$("#add-activity-form").bind("submit", function(event) {
+			console.log("submit event on form")
+			event.preventDefault()
+		})
+
+		activity = {
+			addEmptyRecord: function() {
+				var newForm = $(".iou-form-empty").clone(true)
+				newForm.removeClass("iou-form-empty")
+				newForm.addClass("iou-form")
+				newForm.find("#remove-btn").bind("click", newForm, function(event) {
+					event.data.slideUp(function() {
+						$(this).remove()
+					})
+				})
+				newForm.find("#record-payer").bind("click", newForm, function(event) {
+					activity.setPayer(event.data)
+				})
+				newForm.find("#record-borrower").bind("click", newForm, function(event) {
+					activity.setBorrower(event.data)
+				})
+				$("#end-of-list").before(newForm)
+				$("#end-of-list").html("")
+				newForm.slideDown()
+			},
+			setPayer : function(formEle) {
+				console.log(formEle)
+			},
+			setBorrower: function(formEle) {
+				console.log(formEle)
+			},
+			summary: function() {
+				var ious = $(".iou-form")
+				if (ious.length == 0) {
+					var iouerrormsg = "<div style='display:none' class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+"At least 1 record of payment need to be added before next step"+"</div>"
+					$("#end-of-list").html(iouerrormsg)
+
+					$("#end-of-list div:first-child").slideDown()
+
+					return
+				}
+				/** check all iou form first */
+				for (var i=0; i< ious.length; i++) {
+					var payer = $(ious[i]).find("#record-payer").val()
+					var amount = $(ious[i]).find("#record-amount").val()
+					var borrower = $(ious[i]).find("#record-borrower").val()
+					if (!(payer && amount && borrower)) {
+						console.log("one not set")
+						$(ious[i]).parent().parent().scrollTop($(ious[i]).position().top)
+						$(ious[i]).addClass("alert alert-danger")
+						$(ious[i]).bind("click", $(ious[i]), function(event) {
+							event.data.removeClass("alert alert-danger")
+							event.data.unbind("click")
+						})
+						return
+					} else {
+						console.log("all set")
+					}
+				}
+				/** calculate the bill */
+				var records = {
+					overall: {},
+					names: {}
+				}
+				for (var i=0; i< ious.length; i++) {
+					/** extract payer(s)' id(s) */
+					var payer = $(ious[i]).find("#record-payer").val()
+					payer = payer.split(";")
+					for (var j=0; j< payer.length; j++) {
+						payerName = payer[j].slice(0, payer[j].lastIndexOf("("))
+						payer[j] = payer[j].slice(payer[j].lastIndexOf("(")+1, payer[j].length-1)
+						records.names[payer[j]] = payerName
+					}
+					/** @type {number} the number of amount */
+					var amount = $(ious[i]).find("#record-amount").val()
+					/** extract borrower(s)' id(s) */
+					var borrower = $(ious[i]).find("#record-borrower").val()
+					borrower = borrower.split(";")
+					for (var j=0; j< borrower.length; j++) {
+						borrowerName = borrower[j].slice(0, borrower[j].lastIndexOf("("))
+						borrower[j] = borrower[j].slice(borrower[j].lastIndexOf("(")+1, borrower[j].length-1)
+						records.names[borrower[j]] = borrowerName
+					}
+
+					/** initialize the summary of each iou */
+					records["iou"+i.toString()] = {}
+					for (var j=0; j< payer.length; j++) {
+						records["iou"+i.toString()][payer[j].toString()] = 0
+						records.overall[payer[j].toString()] = 0
+					}
+					for (var j=0; j< borrower.length; j++) {
+						records["iou"+i.toString()][borrower[j].toString()] = 0
+						records.overall[borrower[j].toString()] = 0
+					}
+
+					/** set the record in current iou */
+					for (var j=0; j< payer.length; j++) {
+						records["iou"+i.toString()][payer[j].toString()] += 1.0* amount / payer.length
+					}
+					for (var j=0; j< borrower.length; j++) {
+						records["iou"+i.toString()][borrower[j].toString()] -= 1.0* amount / borrower.length
+					}
+				}
+				/** calculate the overall record */
+				var ids = Object.keys(records.overall)
+				for (var i=0; i< ids.length; i++) {
+					var id = ids[i]
+					for (var j=0; j< ious.length; j++) {
+						if (records["iou"+j.toString()][id]) {
+							records.overall[id] += records["iou"+j.toString()][id]
+						}
+					}
+				}
+
+				console.log(records)
+
+				var d = new Date()
+				var description = $("#activity-description").val()
+				description = description || "New @"+d.toDateString()
+
+				$(".add-activity-summary").html()
+				$(".add-activity-summary").append("<div class='panel-heading'>"+description+"</div><table class='table'></table>")
+				$(".add-activity-summary > table").append("<tr><th style='text-align: center;'>#IOU</th><th>Person</th><th>Amount</th></tr>")
+				for (var i=0; i< ious.length; i++) {
+					var listmsg = ""
+					var ids = Object.keys(records["iou"+i.toString()])
+					for (var j=0; j< ids.length; j++) {
+						var id = ids[j]
+						var name = records.names[id]
+						var amount = records["iou"+i.toString()][id]
+						listmsg += "<tr>"
+						if (j==0) {
+							listmsg += "<th rowspan='"+ids.length.toString()+"' style='text-align: center; vertical-align: middle;'>"+(i+1).toString()+"</th>"
+						}
+						listmsg += "<td>"+name+"</td><td>"+amount+"</td>"
+						listmsg += "</tr>"
+					}
+					$(".add-activity-summary > table").append(listmsg)
+
+				}
+
+				$(".add-activity-summary > table").append("<tr><th colspan='3'>Summary</th></tr>")
+				var listmsg = ""
+				var ids = Object.keys(records.overall)
+				for (var j=0; j< ids.length; j++) {
+					var id = ids[j]
+					var name = records.names[id]
+					var amount = records.overall[id]
+					listmsg += "<tr>"
+					if (j==0) {
+						listmsg += "<th rowspan='"+ids.length.toString()+"'></th>"
+					}
+					listmsg += "<td>"+name+"</td><td>"+amount+"</td>"
+					listmsg += "</tr>"
+				}
+				$(".add-activity-summary > table").append(listmsg)
+				
+
+				$("#add-activity-form").slideUp()
+				$(".add-activity-summary").slideDown()
+
+				$(".add-activity-next").hide()
+				$(".add-activity-confirm").show()
+
+
+				console.log("confirm the bill")
+			},
+			reset: function() {
+				$(".iou-form").remove()
+				$("#add-activity-form").show()
+				$(".add-activity-summary").hide()
+
+				$(".add-activity-next").show()
+				$(".add-activity-confirm").hide()
+			}
+		}
+
+		console.log("run")
+
+		$(document).on("pagebeforeshow", "#addActivity", function() {
+			console.log("show")
+			activity.reset()
+		})
+
+	</script>
+</footer>
