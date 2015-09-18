@@ -312,6 +312,10 @@
 					transition: "none",
 				} );
 
+				if (a.ajaxloader.callback) {
+					$("body").trigger("ajaxloader-callback")
+				}
+
 			}
 		}, 100, this)
 

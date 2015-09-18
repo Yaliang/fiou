@@ -1,6 +1,75 @@
 Parse.initialize("ZnLjW6xuqieYfVfFJZB5nuRONBybVGCjJTS0T8El", "rci8OKWaBeYZSaC6kAwLr30RhmmFFPUWrDCe1ZqG");
 
+DataService = {
+	getUserNameByUserId : function(userid, options) {
+		options = options || {}
+		var User = Parse.Object.extend("User")
+		var query = new Parse.Query(User)
+		query.get(userid, {
+			success: function(userObj) {
+				// The object was retrieved successfully.
+				if (options.callback) {
+					options.callback(userObj.getUsername())
+				}
+			},
+			error: function(userObj, error) {
+				// The object was not retrieved successfully.
+				// error is a Parse.Error with an error code and message.
+			}
+		});
+	}, 
+	addConnectByUserId : function(userid, options) {
+		options = options || {}
+		var currentUser = Parse.User.current()
+		var currentUserId = currentUser.id
 
+		if (currentUserId == userid) {
+			if (options.callback) {
+				options.callback()
+			}
+			return
+		}
+
+		var Connection = Parse.Object.extend("Connection")
+		var query = new Parse.Query(Connection)
+
+		var User = Parse.Object.extend("User")
+		var queryUserSelf = new Parse.Query(User)
+		queryUserSelf.get(currentUserId)
+		var queryUserTarget = new Parse.Query(User)
+		queryUserTarget.get(userid)
+		query.matchesQuery("owner", queryUserSelf)
+		query.matchesQuery("target", queryUserTarget)
+		query.find({
+			success: function(connections) {
+				if (connections.length == 0) {
+					var Connection = Parse.Object.extend("Connection")
+					var User = Parse.Object.extend("User")
+					var connection = new Connection()
+					var userSelf = new User()
+					userSelf.id = currentUserId
+					var userTarget = new User()
+					userTarget.id = userid
+
+					connection.set("owner", userSelf)
+					connection.set("target", userTarget)
+
+					connection.save(null, {
+						success: function(connection) {
+							if (options.callback) {
+								options.callback(connection)
+							}
+						}
+					})
+				} else {
+					if (options.callback) {
+						options.callback()
+					}
+				}
+			}
+		})
+	}
+}
 
 user = {
 	id: "",
@@ -13,7 +82,10 @@ user = {
 		if (currentUser) {
 			user.id = currentUser.id
 			user.username = currentUser.getUsername()
-			pt.loadPage(options.dest || "home")
+			options.dest = options.dest || "home"
+			if (options.dest != "@current") {
+				pt.loadPage(options.dest)
+			}
 		} else {
 			pt.loadPage("login")
 		}
@@ -65,6 +137,12 @@ user = {
 		Parse.User.logOut()
 
 		pt.loadPage("login")
+	},
+	acquireUserNameById : function(userid, options) {
+		DataService.getUserNameByUserId(userid, options)
+	},
+	addConnect: function(userid, options) {
+		DataService.addConnectByUserId(userid, options)
 	}
 }
 
@@ -130,5 +208,6 @@ ajaxloader = {
 		this.obj = obj
 
 		return obj
-	}
+	},
+	callback : false
 }
