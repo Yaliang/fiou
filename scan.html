@@ -8,18 +8,22 @@
 	</a>
 </header>
 <main>
-	<div class="form-group">
+	<form class="form-group">
 		<div class="input-group" data-enhance="false">
-			<span class="input-group-addon" id="qrcode-addon1">
-				<span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span>
-			</span>
-			<input type="file" class="form-control" id="scan-file" placeholder="QRcode" aria-describedby="qrcode-addon1" data-enhance="false" onchange="qrdecoder.extract()">
+			<div class="row">
+				<img class="col-xs-8 col-xs-offset-2" style="opacity:0.3" src="./script/jsqrcode-master/qrcode-sample-blur.png"></img>
+			</div>
+			<div class="row" style="position: relative; top: -182px; height: 182px; margin: auto; margin-bottom: -182px; width: 66.667%;">
+				<p class="text-center" style="margin-top: 60px; margin-bottom: 0; line-height: 2; font-weight: bold; opacity: 0.7;">Tap here to capture a photo with QRcode</p>
+			</div>
+			<input type="file" style="margin: auto; position: relative; top: -182px; opacity: 0; height: 182px; margin-bottom: -182px;" class="form-control" id="scan-file" placeholder="QRcode" data-enhance="false" onchange="qrdecoder.extract()">
 		</div>
-	</div>
+	</form>
 
 	<div class="panel panel-default small">
 		<div class="panel-heading">result</div>
-		<div class="panel-body" id="scan-result">
+		<div class="panel-body">
+			<p id="scan-result" style="word-break: break-all;"></p>
 		</div>
 	</div>
 </main>
@@ -47,9 +51,14 @@
 			extract: function() {
 				var reader = new FileReader();
 				// console.log(document.getElementById('scan-file'))
-				var f = document.getElementById('scan-file').files[0]
+				var f = document.getElementById('scan-file').files
+				if (f.length == 0) {
+					return
+				}
+				f = f[0]
 				qrcode.callback = function(result) {
 					$("#scan-result").html(result)
+					qrdecoder.reaction(result)
 				}
 
 				reader.onloadend = function() {
@@ -57,8 +66,19 @@
 				}
 
 				reader.readAsDataURL(f);
+			},
+			reaction: function(data) {
+				if (data.indexOf("appid="+Parse.applicationId+"|userid=") == 0) {
+					var userid = data.slice(("appid="+Parse.applicationId+"|userid=").length, data.length)
+					ajaxloader.callback = true
+					$("body").unbind("ajaxloader-callback").bind("ajaxloader-callback", userid, function(event) {
+						userInfoJS.loadUserById(event.data)
+						ajaxloader.callback = false
+						$("body").unbind("ajaxloader-callback")
+					})
+					pt.loadPage("userInfo")
+				}
 			}
-		}
-		
+		}	
 	</script>
 </footer>

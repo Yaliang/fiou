@@ -1,0 +1,54 @@
+<title>FIOU</title>
+<pageid>userInfo</pageid>
+
+<header>
+	<h1>FIOU</h1>
+	<a class="header-btn" href='#' data-href='' data-nav='back'>
+		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>Back
+	</a>
+</header>
+<main>
+	<div class="panel panel-default small">
+		<div class="panel-heading">Userid</div>
+		<div class="panel-body" id="other-account-userid">
+		</div>
+	</div>
+	<div class="panel panel-default small">
+		<div class="panel-heading">Username</div>
+		<div class="panel-body" id="other-account-username">
+		</div>
+	</div>
+	<button type="button" class="btn btn-primary btn-block" id="connect-btn" data-enhance="false">
+		<span class="small" style="line-height:2">Add Connection</span>
+	</button>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<script type="text/javascript">
+		user.autologin({
+			dest: "@current"
+		})
+
+		userInfoJS = {
+			loadUserById : function(userid) {
+				$("#other-account-userid").html(userid)
+				user.acquireUserNameById(userid, {
+					callback: function(username) {
+						$("#other-account-username").html(username)
+					}
+				})
+				$("#connect-btn").html("Add Connection")
+				$("#connect-btn").bind("click", userid, function(event) {
+					$("#connect-btn").html("Working...")
+					user.addConnect(event.data, {
+						callback: function() {
+							$("#connect-btn").unbind("click")
+							$("#connect-btn").html("Done")
+						}
+					})
+				})
+			}
+		}
+
+	</script>
+</footer>
