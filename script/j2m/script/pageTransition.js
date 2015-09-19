@@ -313,7 +313,7 @@
 				} );
 
 				if (a.ajaxloader.callback) {
-					$("body").trigger("ajaxloader-callback")
+					a.ajaxloader.callback()
 				}
 
 			}
@@ -460,6 +460,7 @@
 	pageTransition.prototype.touchXcontrollerEndEvent = function(event) {
 
 		if ((( typeof $(event.target).attr("data-nav") != "undefined" && $(event.target).attr("data-nav").toLowerCase() == "back") || parseFloat(this.nowElement.css("left")) > 0) && this.prevElement.length > 0) {
+			console.log()
 			var distance = parseFloat(this.nowElement.css("left"))
 			var fullwidth = $(window).width()
 			/** set the previous element visible */

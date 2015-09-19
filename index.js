@@ -1,6 +1,12 @@
 Parse.initialize("ZnLjW6xuqieYfVfFJZB5nuRONBybVGCjJTS0T8El", "rci8OKWaBeYZSaC6kAwLr30RhmmFFPUWrDCe1ZqG");
 
 DataService = {
+	/**
+	 * parse the user's name/ user object by the specific user id
+	 * @param  {String} userid  The id of user object
+	 * @param  {Object} options Options
+	 * @return {[type]}         [description]
+	 */
 	getUserNameByUserId : function(userid, options) {
 		options = options || {}
 		var User = Parse.Object.extend("User")
@@ -9,7 +15,7 @@ DataService = {
 			success: function(userObj) {
 				// The object was retrieved successfully.
 				if (options.callback) {
-					options.callback(userObj.getUsername())
+					options.callback(userObj.getUsername(), userObj)
 				}
 			},
 			error: function(userObj, error) {
@@ -18,11 +24,19 @@ DataService = {
 			}
 		});
 	}, 
+	/**
+	 * add connection between current user and a user with specific id
+	 * @param {String} userid  The id of user object
+	 * @param {Object} options Options
+	 */
 	addConnectByUserId : function(userid, options) {
 		options = options || {}
+		var User = Parse.Object.extend("User")
 		var currentUser = Parse.User.current()
-		var currentUserId = currentUser.id
+		var targetUser = new User()
+		targetUser.id = userid
 
+		/** check if the current user is same with the user we want to connect */
 		if (currentUserId == userid) {
 			if (options.callback) {
 				options.callback()
@@ -33,31 +47,23 @@ DataService = {
 		var Connection = Parse.Object.extend("Connection")
 		var query = new Parse.Query(Connection)
 
-		var User = Parse.Object.extend("User")
-		var queryUserSelf = new Parse.Query(User)
-		queryUserSelf.get(currentUserId)
-		var queryUserTarget = new Parse.Query(User)
-		queryUserTarget.get(userid)
-		query.matchesQuery("owner", queryUserSelf)
-		query.matchesQuery("target", queryUserTarget)
+		
+		query.equalTo("owner", currentUser)
+		query.equalTo("target", targetUser)
+		/** check the current state between the current user and target user */
 		query.find({
 			success: function(connections) {
 				if (connections.length == 0) {
-					var Connection = Parse.Object.extend("Connection")
-					var User = Parse.Object.extend("User")
+					/** in the case that they are not connected */
 					var connection = new Connection()
-					var userSelf = new User()
-					userSelf.id = currentUserId
-					var userTarget = new User()
-					userTarget.id = userid
 
-					connection.set("owner", userSelf)
-					connection.set("target", userTarget)
+					connection.set("owner", currentUser)
+					connection.set("target", targetUser)
 
 					connection.save(null, {
-						success: function(connection) {
+						success: function(conObj) {
 							if (options.callback) {
-								options.callback(connection)
+								options.callback(conObj)
 							}
 						}
 					})
@@ -68,12 +74,33 @@ DataService = {
 				}
 			}
 		})
+	},
+	getConnectionOfCurrentUser: function(options) {
+		var currentUser = Parse.User.current()
+
+		var Connection = Parse.Object.extend("Connection")
+		var query = new Parse.Query(Connection)
+		query.equalTo("owner", currentUser)
+
+		query.find({
+			success: function(connections) {
+				if (options.callback) {
+					options.callback(connections)
+				}
+			}
+		})
+
 	}
 }
 
 user = {
 	id: "",
 	username: "",
+	/**
+	 * function to auto login by the cache's token in localStorage
+	 * @param  {Object} options Options
+	 * @return {[type]}         [description]
+	 */
 	autologin: function(options) {
 		var currentUser = Parse.User.current()
 
@@ -90,6 +117,10 @@ user = {
 			pt.loadPage("login")
 		}
 	},
+	/**
+	 * login function 
+	 * @return {[type]} [description]
+	 */
 	login: function() {
 		var myname = $("#username").val()
 		var mypass = $("#password").val()
@@ -108,6 +139,10 @@ user = {
 			}
 		});
 	},
+	/**
+	 * sign up function
+	 * @return {[type]} [description]
+	 */
 	signup: function() {
 		var myname = $("#signup-username").val()
 		var mypass = $("#signup-password").val()
@@ -133,20 +168,44 @@ user = {
 			}
 		})
 	},
+	/**
+	 * logout function
+	 * @return {[type]} [description]
+	 */
 	logout: function() {
 		Parse.User.logOut()
 
 		pt.loadPage("login")
 	},
+	/**
+	 * acquire the user's name / user object by the id of user object
+	 * @param  {String} userid  The id of user object
+	 * @param  {Object} options Options
+	 * @return {[type]}         [description]
+	 */
 	acquireUserNameById : function(userid, options) {
 		DataService.getUserNameByUserId(userid, options)
 	},
+	/**
+	 * function to add a connection between current user and target user
+	 * @param {String} userid  The id of target user
+	 * @param {[type]} options [description]
+	 */
 	addConnect: function(userid, options) {
 		DataService.addConnectByUserId(userid, options)
+	},
+	getConnection: function(options) {
+		DataService.getConnectionOfCurrentUser(options)
 	}
 }
 
 ajaxloader = {
+	callback: false,
+	/**
+	 * the entry to request a get function
+	 * @param  {String} id The id of file, it normally comes with the form "./<id>.html"
+	 * @return {[type]}    [description]
+	 */
 	get : function(id) {
 		var href = "./"+id+".html"
 		ajaxloader.done = false
@@ -155,6 +214,11 @@ ajaxloader = {
 			ajaxloader.done = true
 		})
 	},
+	/**
+	 * the function to extract the packaged file
+	 * @param  {String} data The content of the file
+	 * @return {Object}      The unpackaged object
+	 */
 	extract : function(data) {
 
 		var obj = {}
@@ -209,5 +273,4 @@ ajaxloader = {
 
 		return obj
 	},
-	callback : false
 }

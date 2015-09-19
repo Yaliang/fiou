@@ -1,0 +1,52 @@
+<title>FIOU</title>
+<pageid>contacts</pageid>
+
+<header>
+	<h1>FIOU</h1>
+	<a class="header-btn" href='#' data-href='' data-nav='back'>
+		<span class="glyphicon glyphicon-chevron-left" data-nav='back' aria-hidden="true"></span>Back
+	</a>
+</header>
+<main>
+	<ul class="list-group" id="contacts-list">
+		<li class="list-group-item empty-contact" data-contact-id="" data-contact-name=""></li>
+	</ul>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<script type="text/javascript">
+		contacts = {
+			buildList : function() {
+				var options = {}
+				options.callback = function(connections) {
+					for (var i = 0; i< connections.length; i++) {
+						var target = connections[i].get("target")
+						var options = {}
+						options.callback = function(userName, userObj) {
+							var userid = userObj.id
+							var contactEle = $(".empty-contact").clone(true)
+							contactEle.attr("data-contact-id",userid)
+							contactEle.attr("data-contact-name",userName)
+							contactEle.removeClass("empty-contact")
+							contactEle.html(userName+"<span class='pull-right glyphicon glyphicon-chevron-right'></span>")
+							$("#contacts-list").append(contactEle)
+							var prevEle = contactEle.prev()
+							while (prevEle.length > 0 && prevEle.attr("data-contact-name").localeCompare(userName) == 1) {
+								prevEle.before(contactEle)
+								prevEle = contactEle.prev()
+							}
+						}
+						user.acquireUserNameById(target.id, options)
+					}
+				}
+				user.getConnection(options)
+			}
+		}
+
+		$(document).on("pagebeforeshow", "#contacts", function() {
+			console.log("show")
+			contacts.buildList()
+			
+		})
+	</script>
+</footer>
