@@ -15,7 +15,7 @@ DataService = {
 			success: function(userObj) {
 				// The object was retrieved successfully.
 				if (options.callback) {
-					options.callback(userObj.getUsername())
+					options.callback(userObj.getUsername(), userObj)
 				}
 			},
 			error: function(userObj, error) {
@@ -85,7 +85,7 @@ DataService = {
 		query.find({
 			success: function(connections) {
 				if (options.callback) {
-					options.callback(conObj)
+					options.callback(connections)
 				}
 			}
 		})
