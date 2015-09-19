@@ -1,0 +1,31 @@
+<title>FIOU</title>
+<pageid>confirmActivity</pageid>
+
+<header>
+	<h1>FIOU</h1>
+</header>
+<main>
+	<div class="panel panel-default add-activity-summary" data-enhance="false">
+	</div>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<div style="margin: 0 1em; padding: 0.5em 0">
+		<div class="row add-activity-confirm">
+			<button type="button" class="col-xs-offset-1 col-xs-4 btn btn-default" id="back-activity-btn" data-nav='back' data-enhance="false">
+				<span class="small" data-nav='back'>Back</span>
+			</button>
+			<button type="button" class="col-xs-offset-2 col-xs-4 btn btn-primary" id="confirm-activity-btn" onclick="activity.confirm()" data-enhance="false">
+				<span class="small">Confirm</span>
+			</button>
+		</div>
+	</div>
+	<script type="text/javascript">
+		console.log("run")
+
+		$(document).on("pagebeforeshow", "#confirmActivity", function() {
+			console.log("show")
+			activity.fulfill()
+		})
+	</script>
+</footer>
