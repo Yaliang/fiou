@@ -15,7 +15,7 @@ DataService = {
 			success: function(userObj) {
 				// The object was retrieved successfully.
 				if (options.callback) {
-					options.callback(userObj.getUsername(), userObj)
+					options.callback(userObj.getUsername(), userObj, options)
 				}
 			},
 			error: function(userObj, error) {
@@ -39,7 +39,7 @@ DataService = {
 		/** check if the current user is same with the user we want to connect */
 		if (currentUser.id == userid) {
 			if (options.callback) {
-				options.callback()
+				options.callback(options)
 			}
 			return
 		}
@@ -63,18 +63,23 @@ DataService = {
 					connection.save(null, {
 						success: function(conObj) {
 							if (options.callback) {
-								options.callback(conObj)
+								options.callback(conObj, options)
 							}
 						}
 					})
 				} else {
 					if (options.callback) {
-						options.callback()
+						options.callback(options)
 					}
 				}
 			}
 		})
 	},
+	/**
+	 * fetch all connections of current user
+	 * @param  {Object} options The options
+	 * @return {[type]}         [description]
+	 */
 	getConnectionOfCurrentUser: function(options) {
 		var currentUser = Parse.User.current()
 
@@ -85,7 +90,7 @@ DataService = {
 		query.find({
 			success: function(connections) {
 				if (options.callback) {
-					options.callback(connections)
+					options.callback(connections, options)
 				}
 			}
 		})
@@ -111,13 +116,16 @@ user = {
 			user.username = currentUser.getUsername()
 			options.dest = options.dest || "home"
 			if (options.dest != "@current") {
-				if (pt.pageStack.indexOf("login") > -1) {
-					pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
-					$("#login").remove()
-				}
-				if (pt.pageStack.indexOf("signup") > -1) {
-					pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
-					$("#signup").remove()
+				ajaxloader.callback = function() {
+					if (pt.pageStack.indexOf("login") > -1) {
+						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+						$("#login").remove()
+					}
+					if (pt.pageStack.indexOf("signup") > -1) {
+						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
+						$("#signup").remove()
+					}
+					ajaxloader.callback = false
 				}
 				pt.loadPage(options.dest)
 			}
@@ -138,9 +146,16 @@ user = {
 				console.log(userObj)
 				user.id = userObj.id
 				user.username = userObj.getUsername()
-				if (pt.pageStack.indexOf("login") > -1) {
-					pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
-					$("#login").remove()
+				ajaxloader.callback = function() {
+					if (pt.pageStack.indexOf("login") > -1) {
+						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+						$("#login").remove()
+					}
+					if (pt.pageStack.indexOf("signup") > -1) {
+						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
+						$("#signup").remove()
+					}
+					ajaxloader.callback = false
 				}
 				pt.loadPage("home")
 			},
@@ -169,9 +184,16 @@ user = {
 				console.log(userObj)
 				user.id = userObj.id
 				user.username = userObj.getUsername()
-				if (pt.pageStack.indexOf("signup") > -1) {
-					pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
-					$("#signup").remove()
+				ajaxloader.callback = function() {
+					if (pt.pageStack.indexOf("login") > -1) {
+						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+						$("#login").remove()
+					}
+					if (pt.pageStack.indexOf("signup") > -1) {
+						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
+						$("#signup").remove()
+					}
+					ajaxloader.callback = false
 				}
 				pt.loadPage("home")
 			},

@@ -38,5 +38,5 @@
 }
 
 .empty-contact {
-    display: none;
+    display: none !important;
 }
