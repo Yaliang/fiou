@@ -111,6 +111,14 @@ user = {
 			user.username = currentUser.getUsername()
 			options.dest = options.dest || "home"
 			if (options.dest != "@current") {
+				if (pt.pageStack.indexOf("login") > -1) {
+					pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+					$("#login").remove()
+				}
+				if (pt.pageStack.indexOf("signup") > -1) {
+					pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
+					$("#signup").remove()
+				}
 				pt.loadPage(options.dest)
 			}
 		} else {
@@ -130,6 +138,10 @@ user = {
 				console.log(userObj)
 				user.id = userObj.id
 				user.username = userObj.getUsername()
+				if (pt.pageStack.indexOf("login") > -1) {
+					pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+					$("#login").remove()
+				}
 				pt.loadPage("home")
 			},
 			error: function(error) {
@@ -157,6 +169,10 @@ user = {
 				console.log(userObj)
 				user.id = userObj.id
 				user.username = userObj.getUsername()
+				if (pt.pageStack.indexOf("signup") > -1) {
+					pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
+					$("#signup").remove()
+				}
 				pt.loadPage("home")
 			},
 			error: function(userObj, error) {
