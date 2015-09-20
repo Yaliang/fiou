@@ -56,5 +56,9 @@
 
 		$("#to-signup-btn").after("<p class='alert alert-success'>"+navigator.userAgent+"</p>")
 
+		$(document).on("pagebeforeshow", "#login", function() {
+			pt.pageStack = []
+		})
+
 	</script>
 </footer>
