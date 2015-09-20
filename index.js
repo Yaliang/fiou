@@ -37,7 +37,7 @@ DataService = {
 		targetUser.id = userid
 
 		/** check if the current user is same with the user we want to connect */
-		if (currentUserId == userid) {
+		if (currentUser.id == userid) {
 			if (options.callback) {
 				options.callback()
 			}
