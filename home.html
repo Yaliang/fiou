@@ -36,7 +36,7 @@
 			</div>
 			<div class="text-center extra-small">Scan</div>
 		</div>
-		<div class="col-xs-3 home-body-pad" onclick="pt.loadPage('contacts')">
+		<div class="col-xs-3 home-body-pad" onclick="homeJS.onContacts()">
 			<div class="text-center">
 				<span class="glyphicon glyphicon-book text-center" aria-hidden="true"></span>
 			</div>
@@ -60,5 +60,14 @@
 <footer>
 	<script type="text/javascript">
 		user.autologin()
+
+		homeJS = {
+			onContacts : function() {
+				ajaxloader.callback = function() {
+					contacts.buildList()
+				}
+				pt.loadPage('contacts')
+			}
+		}
 	</script>
 </footer>

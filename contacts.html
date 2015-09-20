@@ -2,34 +2,40 @@
 <pageid>contacts</pageid>
 
 <header>
-	<h1>FIOU</h1>
+	<h1>Contacts</h1>
 	<a class="header-btn" href='#' data-href='' data-nav='back'>
 		<span class="glyphicon glyphicon-chevron-left" data-nav='back' aria-hidden="true"></span>Back
 	</a>
 </header>
 <main>
 	<ul class="list-group" id="contacts-list">
-		<li class="list-group-item empty-contact" data-contact-id="" data-contact-name=""></li>
+		<li class="list-group-item empty-contact contact-item" data-contact-id="" data-contact-name=""></li>
 	</ul>
 </main>
 <contentAttrOverscroll>true</contentAttrOverscroll>
 <footer>
 	<script type="text/javascript">
 		contacts = {
-			buildList : function() {
-				var options = {}
-				options.callback = function(connections) {
+			buildList : function(options) {
+				options = options || {}
+				options.callback = function(connections, options) {
 					for (var i = 0; i< connections.length; i++) {
 						var target = connections[i].get("target")
-						var options = {}
+						options = options || {}
 						options.callback = function(userName, userObj) {
 							var userid = userObj.id
 							var contactEle = $(".empty-contact").clone(true)
 							contactEle.attr("data-contact-id",userid)
 							contactEle.attr("data-contact-name",userName)
 							contactEle.removeClass("empty-contact")
-							contactEle.html(userName+"<span class='pull-right glyphicon glyphicon-chevron-right'></span>")
+							contactEle.html(userName)
 							$("#contacts-list").append(contactEle)
+
+							/** bind preset functions */
+							if (options.clickEvent) {
+								contactEle.bind("click", options, options.clickEvent)
+							}
+
 							var prevEle = contactEle.prev()
 							while (prevEle.length > 0 && prevEle.attr("data-contact-name").localeCompare(userName) == 1) {
 								prevEle.before(contactEle)
@@ -40,13 +46,26 @@
 					}
 				}
 				user.getConnection(options)
+			},
+			reset: function() {
+				var contactEle = $(".empty-contact").clone(true)
+				$("#contacts-list").html("")
+				$("#contacts-list").append(contactEle)
 			}
 		}
 
 		$(document).on("pagebeforeshow", "#contacts", function() {
 			console.log("show")
-			contacts.buildList()
-			
+			contacts.reset()
+			if (ajaxloader.callback) {
+				console.log("a callback has set")
+			} else {
+				contacts.buildList()
+			}
+		})
+
+		user.autologin({
+			dest: "@current"
 		})
 	</script>
 </footer>

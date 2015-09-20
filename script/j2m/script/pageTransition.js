@@ -147,7 +147,52 @@
 		} else {
 			this.loadPage(window.location.hash.slice(1))
 		}
-	
+
+		/**
+		* Windows Phone 8.1 fakes user agent string to look like Android and iPhone.
+		*
+		* @type boolean
+		*/
+		this.deviceIsWindowsPhone = navigator.userAgent.indexOf("Windows Phone") >= 0;
+
+		/**
+		 * Android requires exceptions.
+		 *
+		 * @type boolean
+		 */
+		this.deviceIsAndroid = navigator.userAgent.indexOf('Android') > 0 && !deviceIsWindowsPhone;
+
+
+		/**
+		 * iOS requires exceptions.
+		 *
+		 * @type boolean
+		 */
+		this.deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent) && !deviceIsWindowsPhone;
+
+
+		/**
+		 * iOS 4 requires an exception for select elements.
+		 *
+		 * @type boolean
+		 */
+		this.deviceIsIOS4 = deviceIsIOS && (/OS 4_\d(_\d)?/).test(navigator.userAgent);
+
+
+		/**
+		 * iOS 6.0-7.* requires the target element to be manually derived
+		 *
+		 * @type boolean
+		 */
+		this.deviceIsIOSWithBadTarget = deviceIsIOS && (/OS [6-7]_\d/).test(navigator.userAgent);
+
+		/**
+		 * BlackBerry requires exceptions.
+		 *
+		 * @type boolean
+		 */
+		this.deviceIsBlackBerry10 = navigator.userAgent.indexOf('BB10') > 0;
+		
 		return this
 	}	
 
@@ -220,6 +265,11 @@
 		newPage.children(".ctrl-page-header").attr("id",obj.pageId+"-header").html(obj.header)
 		newPage.children(".ctrl-page-content").attr("id",obj.pageId+"-content").html(obj.content)
 		newPage.children(".ctrl-page-footer").attr("id",obj.pageId+"-footer").html(obj.footer)
+
+		/** set statue bar in ios */
+		if (this.deviceIsIOS || this.deviceIsIOS4) {
+			newPage.children(".ctrl-page-header").css("padding-top", "20px")
+		}
 
 		/** add attribution for content part*/
 		var contentAttr = obj.contentAttr || {}
@@ -314,6 +364,7 @@
 
 				if (a.ajaxloader.callback) {
 					a.ajaxloader.callback()
+					a.ajaxloader.callback = false
 				}
 
 			}

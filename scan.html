@@ -72,6 +72,7 @@
 					var userid = data.slice(("appid="+Parse.applicationId+"|userid=").length, data.length)
 					ajaxloader.callbackData = userid
 					ajaxloader.callback = function() {
+						console.log("callback")
 						userInfoJS.loadUserById(ajaxloader.callbackData)
 						ajaxloader.callback = false
 					}
