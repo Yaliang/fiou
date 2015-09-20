@@ -273,12 +273,7 @@
 		newPage.children(".ctrl-page-content").attr("id",obj.pageId+"-content").html(obj.content)
 		newPage.children(".ctrl-page-footer").attr("id",obj.pageId+"-footer").html(obj.footer)
 
-		/** set statue bar in ios */
-		if (this.deviceIsIOS9) {
-			newPage.children(".ctrl-page-header").css("background-color", "white")
-		} else if (this.deviceIsIOS) {
-			newPage.children(".ctrl-page-header").css("padding-top", "20px")
-		}
+		
 
 		/** add attribution for content part*/
 		var contentAttr = obj.contentAttr || {}
@@ -290,6 +285,17 @@
 		}
 
 		$("body").append(newPage)
+
+		/** set statue bar in ios */
+		if (this.deviceIsIOS9) {
+			console.log("statue bar style not working")
+		} else if (this.deviceIsIOS) {
+			newPage.children(".ctrl-page-header").css("padding-top", "20px")
+			console.log(newPage.find(".header-btn"))
+			newPage.find(".header-btn").each(function() {
+				$(this).css("margin-top", "20px")
+			})
+		}
 
 		newPage.find("a").bind("click", this, function(event) {
 			if ($(this).attr("data-nav") == "back") {
