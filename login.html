@@ -45,6 +45,13 @@
 
 		user.autologin()
 
+		$(document).on("pagebeforeshow", "#login", function() {
+			console.log("show")
+			$("#username").val("")
+			$("#password").val("")
+			$("#loginerror").html("")
+		})
+
 		console.log("run")
 
 	</script>
