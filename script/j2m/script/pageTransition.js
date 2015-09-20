@@ -187,6 +187,13 @@
 		this.deviceIsIOSWithBadTarget = this.deviceIsIOS && (/OS [6-7]_\d/).test(navigator.userAgent);
 
 		/**
+		 * iOS 6.0-7.* requires the target element to be manually derived
+		 *
+		 * @type boolean
+		 */
+		this.deviceIsIOS9 = this.deviceIsIOS && (/OS 9_\d(_\d)?/).test(navigator.userAgent);
+
+		/**
 		 * BlackBerry requires exceptions.
 		 *
 		 * @type boolean
@@ -267,7 +274,9 @@
 		newPage.children(".ctrl-page-footer").attr("id",obj.pageId+"-footer").html(obj.footer)
 
 		/** set statue bar in ios */
-		if (this.deviceIsIOS) {
+		if (this.deviceIsIOS9) {
+			newPage.children(".ctrl-page-header").css("background-color", "white")
+		} else if (this.deviceIsIOS) {
 			newPage.children(".ctrl-page-header").css("padding-top", "20px")
 		}
 
