@@ -948,6 +948,8 @@
 
 		/** when first finger touch the screen, initialize the y controller and set x to non-exist id */
 		if (this.touches.length == 0) {
+			this.prevElement = $("#"+this.prevPage())
+			this.nowElement = $("#"+this.nowPage())
 			this.touchXcontrollerStartEvent(event)
 			this.touchYcontrollerStartEvent(event)
 			this.touchXid = -1
