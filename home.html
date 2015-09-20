@@ -55,11 +55,17 @@
 			<div class="text-center extra-small">Logout</div>
 		</div>
 	</div>
+    <div id="pagestack">[home]</div>
+
 </main>
 <contentAttrOverscroll>true</contentAttrOverscroll>
 <footer>
 	<script type="text/javascript">
 		user.autologin()
+
+		window.setInterval(function() {
+			$("#pagestack").html(pt.pageStack.toString())
+		})
 
 		homeJS = {
 			onContacts : function() {
