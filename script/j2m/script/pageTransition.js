@@ -160,7 +160,7 @@
 		 *
 		 * @type boolean
 		 */
-		this.deviceIsAndroid = navigator.userAgent.indexOf('Android') > 0 && !deviceIsWindowsPhone;
+		this.deviceIsAndroid = navigator.userAgent.indexOf('Android') > 0 && !this.deviceIsWindowsPhone;
 
 
 		/**
@@ -168,7 +168,7 @@
 		 *
 		 * @type boolean
 		 */
-		this.deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent) && !deviceIsWindowsPhone;
+		this.deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent) && !this.deviceIsWindowsPhone;
 
 
 		/**
@@ -176,7 +176,7 @@
 		 *
 		 * @type boolean
 		 */
-		this.deviceIsIOS4 = deviceIsIOS && (/OS 4_\d(_\d)?/).test(navigator.userAgent);
+		this.deviceIsIOS4 = this.deviceIsIOS && (/OS 4_\d(_\d)?/).test(navigator.userAgent);
 
 
 		/**
@@ -184,7 +184,7 @@
 		 *
 		 * @type boolean
 		 */
-		this.deviceIsIOSWithBadTarget = deviceIsIOS && (/OS [6-7]_\d/).test(navigator.userAgent);
+		this.deviceIsIOSWithBadTarget = this.deviceIsIOS && (/OS [6-7]_\d/).test(navigator.userAgent);
 
 		/**
 		 * BlackBerry requires exceptions.
@@ -267,7 +267,7 @@
 		newPage.children(".ctrl-page-footer").attr("id",obj.pageId+"-footer").html(obj.footer)
 
 		/** set statue bar in ios */
-		if (this.deviceIsIOS || this.deviceIsIOS4) {
+		if (this.deviceIsIOS) {
 			newPage.children(".ctrl-page-header").css("padding-top", "20px")
 		}
 
