@@ -307,6 +307,11 @@
 		})
 
 		$(document).on("pageshow", "#"+obj.pageId, this, function(event) {
+
+			if (event.data.ajaxloader.callback) {
+				event.data.ajaxloader.callback()
+				event.data.ajaxloader.callback = false
+			}
 			/**
 			 * Set the touch Events, this functionality might be able to move into load page function
 			 */
@@ -376,12 +381,6 @@
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", "#"+obj.pageId, {
 					transition: "none",
 				} );
-
-				if (a.ajaxloader.callback) {
-					a.ajaxloader.callback()
-					a.ajaxloader.callback = false
-				}
-
 			}
 		}, 100, this)
 

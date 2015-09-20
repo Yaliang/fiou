@@ -64,6 +64,15 @@
 			}
 		})
 
+		$(document).on("pageshow", "#contacts", function() {
+			console.log("show")
+			if (ajaxloader.callback) {
+				console.log("a callback has set")
+			} else {
+				contacts.buildList()
+			}
+		})
+
 		user.autologin({
 			dest: "@current"
 		})

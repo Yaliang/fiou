@@ -123,7 +123,7 @@ user = {
 					if ($("#login").length > 0) {
 						$("#login").remove()
 					}
-					if (pt.prevElement.attr("id") == "login") {
+					if (typeof pt.prevElement != "undefined" && pt.prevElement.attr("id") == "login") {
 						pt.prevElement = $("#"+pt.prevPage())
 					}
 					if (pt.pageStack.indexOf("signup") > -1) {
@@ -132,7 +132,7 @@ user = {
 					if ($("#signup").length > 0) {
 						$("#signup").remove()
 					}
-					if (pt.prevElement.attr("id") == "signup") {
+					if (typeof pt.prevElement != "undefined" && pt.prevElement.attr("id") == "signup") {
 						pt.prevElement = $("#"+pt.prevPage())
 					}
 					ajaxloader.callback = false
@@ -163,7 +163,7 @@ user = {
 					if ($("#login").length > 0) {
 						$("#login").remove()
 					}
-					if (pt.prevElement.attr("id") == "login") {
+					if (typeof pt.prevElement != "undefined" && pt.prevElement.attr("id") == "login") {
 						pt.prevElement = $("#"+pt.prevPage())
 					}
 					if (pt.pageStack.indexOf("signup") > -1) {
@@ -172,7 +172,7 @@ user = {
 					if ($("#signup").length > 0) {
 						$("#signup").remove()
 					}
-					if (pt.prevElement.attr("id") == "signup") {
+					if (typeof pt.prevElement != "undefined" && pt.prevElement.attr("id") == "signup") {
 						pt.prevElement = $("#"+pt.prevPage())
 					}
 					ajaxloader.callback = false
@@ -214,7 +214,7 @@ user = {
 					if (pt.prevElement.attr("id") == "signup") {
 						pt.prevElement = $("#"+pt.prevPage())
 					}
-					
+
 					if (pt.pageStack.indexOf("login") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
 					}
