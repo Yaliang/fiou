@@ -120,10 +120,16 @@ user = {
 					if (pt.pageStack.indexOf("login") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
 						$("#login").remove()
+						if (pt.prevElement.attr("id") == "login") {
+							pt.prevElement = $("#"+pt.prevPage())
+						}
 					}
 					if (pt.pageStack.indexOf("signup") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
 						$("#signup").remove()
+						if (pt.prevElement.attr("id") == "signup") {
+							pt.prevElement = $("#"+pt.prevPage())
+						}
 					}
 					ajaxloader.callback = false
 				}
@@ -150,10 +156,16 @@ user = {
 					if (pt.pageStack.indexOf("login") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
 						$("#login").remove()
+						if (pt.prevElement.attr("id") == "login") {
+							pt.prevElement = $("#"+pt.prevPage())
+						}
 					}
 					if (pt.pageStack.indexOf("signup") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
 						$("#signup").remove()
+						if (pt.prevElement.attr("id") == "signup") {
+							pt.prevElement = $("#"+pt.prevPage())
+						}
 					}
 					ajaxloader.callback = false
 				}
@@ -185,13 +197,19 @@ user = {
 				user.id = userObj.id
 				user.username = userObj.getUsername()
 				ajaxloader.callback = function() {
-					if (pt.pageStack.indexOf("login") > -1) {
-						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
-						$("#login").remove()
-					}
 					if (pt.pageStack.indexOf("signup") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
 						$("#signup").remove()
+						if (pt.prevElement.attr("id") == "signup") {
+							pt.prevElement = $("#"+pt.prevPage())
+						}
+					}
+					if (pt.pageStack.indexOf("login") > -1) {
+						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+						$("#login").remove()
+						if (pt.prevElement.attr("id") == "login") {
+							pt.prevElement = $("#"+pt.prevPage())
+						}
 					}
 					ajaxloader.callback = false
 				}
