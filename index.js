@@ -119,17 +119,21 @@ user = {
 				ajaxloader.callback = function() {
 					if (pt.pageStack.indexOf("login") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+					}
+					if ($("#login").length > 0) {
 						$("#login").remove()
-						if (pt.prevElement.attr("id") == "login") {
-							pt.prevElement = $("#"+pt.prevPage())
-						}
+					}
+					if (pt.prevElement.attr("id") == "login") {
+						pt.prevElement = $("#"+pt.prevPage())
 					}
 					if (pt.pageStack.indexOf("signup") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
+					}
+					if ($("#signup").length > 0) {
 						$("#signup").remove()
-						if (pt.prevElement.attr("id") == "signup") {
-							pt.prevElement = $("#"+pt.prevPage())
-						}
+					}
+					if (pt.prevElement.attr("id") == "signup") {
+						pt.prevElement = $("#"+pt.prevPage())
 					}
 					ajaxloader.callback = false
 				}
@@ -155,17 +159,21 @@ user = {
 				ajaxloader.callback = function() {
 					if (pt.pageStack.indexOf("login") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
+					}
+					if ($("#login").length > 0) {
 						$("#login").remove()
-						if (pt.prevElement.attr("id") == "login") {
-							pt.prevElement = $("#"+pt.prevPage())
-						}
+					}
+					if (pt.prevElement.attr("id") == "login") {
+						pt.prevElement = $("#"+pt.prevPage())
 					}
 					if (pt.pageStack.indexOf("signup") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
+					}
+					if ($("#signup").length > 0) {
 						$("#signup").remove()
-						if (pt.prevElement.attr("id") == "signup") {
-							pt.prevElement = $("#"+pt.prevPage())
-						}
+					}
+					if (pt.prevElement.attr("id") == "signup") {
+						pt.prevElement = $("#"+pt.prevPage())
 					}
 					ajaxloader.callback = false
 				}
@@ -199,18 +207,24 @@ user = {
 				ajaxloader.callback = function() {
 					if (pt.pageStack.indexOf("signup") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("signup"), 1)
-						$("#signup").remove()
-						if (pt.prevElement.attr("id") == "signup") {
-							pt.prevElement = $("#"+pt.prevPage())
-						}
 					}
+					if ($("#signup").length > 0) {
+						$("#signup").remove()
+					}
+					if (pt.prevElement.attr("id") == "signup") {
+						pt.prevElement = $("#"+pt.prevPage())
+					}
+					
 					if (pt.pageStack.indexOf("login") > -1) {
 						pt.pageStack.splice(pt.pageStack.indexOf("login"), 1)
-						$("#login").remove()
-						if (pt.prevElement.attr("id") == "login") {
-							pt.prevElement = $("#"+pt.prevPage())
-						}
 					}
+					if ($("#login").length > 0) {
+						$("#login").remove()
+					}
+					if (pt.prevElement.attr("id") == "login") {
+						pt.prevElement = $("#"+pt.prevPage())
+					}
+					
 					ajaxloader.callback = false
 				}
 				pt.loadPage("home")
