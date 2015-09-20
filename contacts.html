@@ -57,11 +57,6 @@
 		$(document).on("pagebeforeshow", "#contacts", function() {
 			console.log("show")
 			contacts.reset()
-			if (ajaxloader.callback) {
-				console.log("a callback has set")
-			} else {
-				contacts.buildList()
-			}
 		})
 
 		$(document).on("pageshow", "#contacts", function() {
