@@ -23,9 +23,37 @@
 	<script type="text/javascript">
 		console.log("run")
 
+
+
 		$(document).on("pagebeforeshow", "#confirmActivity", function() {
 			console.log("show")
-			activity.fulfill()
+			if (typeof(activity) != "undefined" && activity.fulfill) {
+				activity.fulfill()
+			} else {
+				user.autologin()
+			}
 		})
+
+		if (typeof(activity) != "undefined") {
+			activity.confirm = function() {
+				var records = activity.records
+				var options = {
+					records: records
+				}
+
+				options.callback = function(activObj, options) {
+					
+
+				}
+
+				DataService.saveNewActivity(records, options)
+
+				/** first, save the activity */
+				
+			}
+		}
+		
+
+
 	</script>
 </footer>
