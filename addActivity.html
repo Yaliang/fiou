@@ -9,43 +9,80 @@
 </header>
 <main>
 	<form id="add-activity-form" data-enhance="false">
-		<div class="form-group">
+		<div class="form-group" id="basic-info-form">
 			<div class="input-group" data-enhance="false">
 				<span class="input-group-addon" id="activity-description-addon1">
 					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 				</span>
 				<input type="text" class="form-control" id="activity-description" placeholder="Short Description/Note" aria-describedby="activity-description-addon1" data-enhance="false">
 			</div>
-		</div>
-
-		<div class="form-group iou-form-empty" style="display:none">
-			<p style="margin: 0; text-align: right;">
-				<span class="glyphicon glyphicon-remove" id="remove-btn" aria-hidden="true"></span>
-			</p>
 			<div class="input-group" data-enhance="false">
 				<span class="input-group-addon" id="record-payer-addon">
 					<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
 				</span>
-				<input type="text" class="form-control" id="record-payer" placeholder="Payer" readOnly="readOnly" aria-describedby="record-payer-addon" data-enhance="false">
+				<input type="text" class="form-control" id="record-payer" placeholder="Payer" readOnly="readOnly" aria-describedby="record-payer-addon" onclick="activity.setPayer($('#basic-info-form'))" data-enhance="false">
 			</div>
 			<div class="input-group" data-enhance="false">
-				<span class="input-group-addon" id="record-amount-addon">
+				<span class="input-group-addon" id="record-price-addon">
 					<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
 				</span>
-				<input type="number" step="0.01" min="0.00" class="form-control" id="record-amount" placeholder="0.00" aria-describedby="record-payer-addon" data-enhance="false">
+				<input type="number" step="0.01" min="0.01" class="form-control" id="record-price" placeholder="Overall Price" aria-describedby="record-price-addon" onchange="activity.updateOverallMoney()" data-enhance="false">
+			</div>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-tax-addon">
+					<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+				</span>
+				<input type="number" step="0.01" min="0.00" class="form-control" id="record-tax" placeholder="Overall Tax" aria-describedby="record-tax-addon" onchange="activity.updateOverallMoney()" data-enhance="false">
+			</div>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-money-addon">
+					<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+				</span>
+				<input type="number" step="0.01" min="0.01" class="form-control" id="record-money" placeholder="Overall Money" readOnly="readOnly" aria-describedby="record-money-addon" data-enhance="false">
 			</div>
 			<div class="input-group" data-enhance="false">
 				<span class="input-group-addon" id="record-borrower-addon">
 					<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
 				</span>
-				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Bill" readOnly="readOnly" aria-describedby="record-borrower-addon" data-enhance="false">
+				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Bill" readOnly="readOnly" aria-describedby="record-borrower-addon" onclick="activity.setBorrower($('#basic-info-form'))" data-enhance="false">
 			</div>
+		</div>
+
+		<div class="form-group sub-record-form-empty" style="display:none">
+			<p style="margin: 0; text-align: right;">
+				<span class="glyphicon glyphicon-remove" id="remove-btn" aria-hidden="true"></span>
+			</p>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-price-addon">
+					<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+				</span>
+				<input type="number" step="0.01" min="0.01" class="form-control" id="record-price" placeholder="Sub-price" aria-describedby="record-price-addon" data-enhance="false">
+			</div>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-tax-addon">
+					<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+				</span>
+				<input type="number" step="0.01" min="0.00" class="form-control" id="record-tax" placeholder="Tax" readOnly="readOnly" aria-describedby="record-tax-addon" data-enhance="false">
+			</div>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-money-addon">
+					<span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+				</span>
+				<input type="number" step="0.01" min="0.00" class="form-control" id="record-money" placeholder="Sub-money" readOnly="readOnly" aria-describedby="record-money-addon" data-enhance="false">
+			</div>
+			<div class="input-group" data-enhance="false">
+				<span class="input-group-addon" id="record-borrower-addon">
+					<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+				</span>
+				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Sub-bill" readOnly="readOnly" aria-describedby="record-borrower-addon" data-enhance="false">
+			</div>
+			<div id="end-of-sub-record"></div>
 		</div>
 
 		<div id="end-of-list"></div>
 
 		<button type="button" class="btn btn-default btn-block" id="add-record-btn" onclick="activity.addEmptyRecord()" data-enhance="false">
-			<span class="small" style="line-height:2">Additional IOU in Activity</span>
+			<span class="small" style="line-height:2">Add a sub-record</span>
 		</button>
 	</form>
 
@@ -60,15 +97,16 @@
 				<span class="small">Next</span>
 			</button>
 		</div>
-		<div class="row add-activity-confirm" style="display:none">
-			<button type="button" class="col-xs-offset-1 col-xs-4 btn btn-default" id="back-activity-btn" onclick="activity.back()" data-enhance="false">
-				<span class="small">Back</span>
-			</button>
-			<button type="button" class="col-xs-offset-2 col-xs-4 btn btn-primary" id="confirm-activity-btn" onclick="activity.confirm()" data-enhance="false">
-				<span class="small">Confirm</span>
+	</div>
+
+	<div id="contact-footer-save-div" style='margin: 0 1em; padding: 0.5em 0; display: none'>
+		<div class='row'>
+			<button type='button' class='col-xs-offset-3 col-xs-6 btn btn-primary' id='contact-footer-save-btn' data-nav='back' data-enhance='false'>
+				<span class='small' data-nav='back' >Done</span>
 			</button>
 		</div>
 	</div>
+
 	<script type="text/javascript">
 		$("#add-activity-form").bind("submit", function(event) {
 			console.log("submit event on form")
@@ -81,21 +119,42 @@
 			 * clone an empty entry of record and append at the end of list
 			 */
 			addEmptyRecord: function() {
-				var newForm = $(".iou-form-empty").clone(true)
+				var newForm = $(".sub-record-form-empty").clone(true)
 				/** set the new class */
-				newForm.removeClass("iou-form-empty")
-				newForm.addClass("iou-form")
+				newForm.removeClass("sub-record-form-empty")
+				newForm.addClass("sub-record-form")
 				/** bind the function */
 				newForm.find("#remove-btn").bind("click", newForm, function(event) {
 					event.data.slideUp(function() {
 						$(this).remove()
 					})
 				})
-				newForm.find("#record-payer").bind("click", newForm, function(event) {
-					activity.setPayer(event.data)
+				newForm.find("#record-price").bind("change", newForm, function(event) {
+					var subPrice = event.data.find("#record-price").val()
+					if (subPrice.length == 0) {
+						event.data.find("#record-tax").val("")
+						event.data.find("#record-money").val("")
+						return 
+					} else {
+						subPrice = 1.0 * subPrice
+						event.data.find("#record-price").val(subPrice.toFixed(2))
+						event.data.find("#end-of-sub-record").html("")
+					}
+					var overallPrice = $("#basic-info-form").find("#record-price").val()
+					var overallTax = $("#basic-info-form").find("#record-tax").val()
+					if (overallPrice && overallTax) {
+						var subTax = 1.0 * overallTax / overallPrice * subPrice
+						event.data.find("#record-tax").val(subTax.toFixed(2))
+						var subMoney = 1.0 * subPrice + 1.0 * subTax
+						event.data.find("#record-money").val(subMoney.toFixed(2))
+					} else {
+						event.data.find("#record-tax").val("")
+						event.data.find("#record-money").val(subPrice.toFixed(2))
+					}
 				})
 				newForm.find("#record-borrower").bind("click", newForm, function(event) {
 					activity.setBorrower(event.data)
+					event.data.find("#end-of-sub-record").html("")
 				})
 				/** append at the end of list */
 				$("#end-of-list").before(newForm)
@@ -104,104 +163,323 @@
 				newForm.slideDown()
 			},
 			setPayer : function(formEle) {
+				var options = {}
+				options.displaySelf = true
+				options.clickEvent = function() {
+					if ($(this).attr("data-select") != "true") {
+						$(this).append("<span class='pull-right glyphicon glyphicon-ok'></span>")
+						$(this).attr("data-select","true")
+						$(this).addClass("list-group-item-success")
+					} else if ($(this).attr("data-select") == "true") {
+						$(this).find(".glyphicon-ok").remove()
+						$(this).attr("data-select","false")
+						$(this).removeClass("list-group-item-success")
+					}
+				}
+				ajaxloader.callbackData = options
+				ajaxloader.callback = function() {
+					contacts.buildList(ajaxloader.callbackData)
+					var btnEle = $("#contact-footer-save-div")
+					$("#contacts").children(".ctrl-page-footer").prepend(btnEle)
+					btnEle.css("display", "")
+					btnEle.find("#contact-footer-save-btn").unbind("click").bind("click", {
+						target: formEle.find("#record-payer")
+					}, function(event) {
+						var target = event.data.target
+						var payers = ""
+						var contacts = $("#contacts").find(".contact-item")
+						for (var i=0; i< contacts.length; i++) {
+							var contact = $(contacts[i])
+							if (contact.attr("data-select") == "true") {
+								payers += contact.attr("data-contact-name")+"("+contact.attr("data-contact-id")+");"
+							}
+						}
+						target.val(payers)
+						$("#contact-footer-save-div").css("display","none")
+						$("#addActivity").children(".ctrl-page-footer").append($("#contact-footer-save-div"))
+					})
+				}
+				activity.keep = true
+				pt.loadPage("contacts")
 				console.log(formEle)
 			},
 			setBorrower: function(formEle) {
+				var options = {}
+				options.displaySelf = true
+				options.clickEvent = function() {
+					if ($(this).attr("data-select") != "true") {
+						$(this).append("<span class='pull-right glyphicon glyphicon-ok'></span>")
+						$(this).attr("data-select","true")
+						$(this).addClass("list-group-item-success")
+					} else if ($(this).attr("data-select") == "true") {
+						$(this).find(".glyphicon-ok").remove()
+						$(this).attr("data-select","false")
+						$(this).removeClass("list-group-item-success")
+					}
+				}
+				ajaxloader.callbackData = options
+				ajaxloader.callback = function() {
+					contacts.buildList(ajaxloader.callbackData)
+					var btnEle = $("#contact-footer-save-div")
+					$("#contacts").children(".ctrl-page-footer").prepend(btnEle)
+					btnEle.css("display", "")
+					btnEle.find("#contact-footer-save-btn").unbind("click").bind("click", {
+						target: formEle.find("#record-borrower")
+					}, function(event) {
+						var target = event.data.target
+						var borrowers = ""
+						var contacts = $("#contacts").find(".contact-item")
+						for (var i=0; i< contacts.length; i++) {
+							var contact = $(contacts[i])
+							if (contact.attr("data-select") == "true") {
+								borrowers += contact.attr("data-contact-name")+"("+contact.attr("data-contact-id")+");"
+							}
+						}
+						target.val(borrowers)
+						$("#contact-footer-save-div").css("display","none")
+						$("#addActivity").children(".ctrl-page-footer").append($("#contact-footer-save-div"))
+					})
+				}
+				activity.keep = true
+				pt.loadPage("contacts")
 				console.log(formEle)
 			},
+			updateOverallMoney: function() {
+				/** check overall price */
+				var overallPrice = $("#basic-info-form").find("#record-price").val()
+				if (overallPrice.length == 0) {
+					overallPrice = 0
+				} else {
+					overallPrice = 1.0 * overallPrice
+					$("#basic-info-form").find("#record-price").val(overallPrice.toFixed(2))
+				}
+				/** check overall tax */
+				var overallTax = $("#basic-info-form").find("#record-tax").val()
+				if (overallTax.length == 0) {
+					overallTax = 0
+				} else {
+					overallTax = 1.0 * overallTax
+					$("#basic-info-form").find("#record-tax").val(overallTax.toFixed(2))
+				}
+				$("#basic-info-form").find("#record-money").val((overallPrice+overallTax).toFixed(2))
+				/** trigger the sub-records update */
+				var srecord = $(".sub-record-form")
+				for (var i=0; i< srecord.length; i++) {
+					$(srecord[i]).find("#record-price").trigger("change")
+				}
+			},
 			summary: function() {
-				/** get all ious */
-				var ious = $(".iou-form")
-				/** check if at lease 1 iou existing */
-				if (ious.length == 0) {
-					var iouerrormsg = "<div style='display:none' class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+"At least 1 record of payment need to be added before next step"+"</div>"
-					$("#end-of-list").html(iouerrormsg)
+				/** check fundamental inputs */
+				/** check payers */
+				var payers = $("#basic-info-form").find("#record-payer").val()
+				var checkResult = true
+				if (payers.length == 0) {
+					var iouerrormsg = "You should set at least 1 payer."
+					checkResult = false
+				}
+				/** check overall price */
+				var overallPrice = $("#basic-info-form").find("#record-price").val()
+				if (overallPrice.length == 0) {
+					var iouerrormsg = "Overall Price is required."
+					checkResult = false
+				}
+				/** check overall tax */
+				var overallTax = $("#basic-info-form").find("#record-tax").val()
+				if (overallTax.length == 0) {
+					var iouerrormsg = "Overall Tax is required."
+					checkResult = false
+				}
+				/** check borrowers */
+				var borrowers = $("#basic-info-form").find("#record-borrower").val()
+				if (borrowers.length == 0) {
+					var iouerrormsg = "You should set at least 1 person who needs to pay the bill."
+					checkResult = false
+				}
 
+				/** display the current errors and return */
+				if (!checkResult) {
+					var iouerrorcontent = "<div style='display:none' class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+iouerrormsg+"</div>"
+					$("#end-of-list").html(iouerrorcontent)
 					$("#end-of-list div:first-child").slideDown()
 
 					return
 				}
-				/** check all iou form first */
-				for (var i=0; i< ious.length; i++) {
-					var payer = $(ious[i]).find("#record-payer").val()
-					var amount = $(ious[i]).find("#record-amount").val()
-					var borrower = $(ious[i]).find("#record-borrower").val()
-					if (!(payer && amount && borrower)) {
-						console.log("one not set")
-						$(ious[i]).parent().parent().scrollTop($(ious[i]).position().top)
-						$(ious[i]).addClass("alert alert-danger")
-						$(ious[i]).bind("click", $(ious[i]), function(event) {
-							event.data.removeClass("alert alert-danger")
-							event.data.unbind("click")
-						})
+
+				/** get all srecord(sub-record) */
+				var srecord = $(".sub-record-form")
+
+				/** check all srecord form*/
+				var srecordSum = 0
+				for (var i=0; i< srecord.length; i++) {
+					var subPrice = $(srecord[i]).find("#record-price").val()
+					srecordSum += 1.0 * subPrice
+					var subBorrower = $(srecord[i]).find("#record-borrower").val()
+					if (!subPrice) {
+						var iouerrormsg = "The price of sub-record is required."
+					} else if (!subBorrower) {
+						var iouerrormsg = "You should set at least 1 person who needs to pay the bill."
+					}
+					if (!(subPrice && subBorrower)) {
+						var iouerrorcontent = "<div style='display:none' class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+iouerrormsg+"</div>"
+						$(srecord[i]).find("#end-of-sub-record").html(iouerrorcontent)
+						$(srecord[i]).find("#end-of-sub-record div:first-child").show()
+						$(srecord[i]).parents(".ctrl-page-content").scrollTop($(srecord[i]).position().top)
+						
 						return
-					} else {
-						console.log("all set")
 					}
 				}
-				/** calculate the bill */
-				var records = {
-					overall: {},
-					names: {}
-				}
-				for (var i=0; i< ious.length; i++) {
-					/** extract payer(s)' id(s) */
-					var payer = $(ious[i]).find("#record-payer").val()
-					payer = payer.split(";")
-					for (var j=0; j< payer.length; j++) {
-						payerName = payer[j].slice(0, payer[j].lastIndexOf("("))
-						payer[j] = payer[j].slice(payer[j].lastIndexOf("(")+1, payer[j].length-1)
-						records.names[payer[j]] = payerName
-					}
-					/** @type {number} the number of amount */
-					var amount = $(ious[i]).find("#record-amount").val()
-					/** extract borrower(s)' id(s) */
-					var borrower = $(ious[i]).find("#record-borrower").val()
-					borrower = borrower.split(";")
-					for (var j=0; j< borrower.length; j++) {
-						borrowerName = borrower[j].slice(0, borrower[j].lastIndexOf("("))
-						borrower[j] = borrower[j].slice(borrower[j].lastIndexOf("(")+1, borrower[j].length-1)
-						records.names[borrower[j]] = borrowerName
-					}
 
-					/** initialize the summary of each iou */
-					records["iou"+i.toString()] = {}
-					for (var j=0; j< payer.length; j++) {
-						records["iou"+i.toString()][payer[j].toString()] = 0
-						records.overall[payer[j].toString()] = 0
-					}
-					for (var j=0; j< borrower.length; j++) {
-						records["iou"+i.toString()][borrower[j].toString()] = 0
-						records.overall[borrower[j].toString()] = 0
-					}
+				/** check the sum of sub-records */
+				if (srecordSum > overallPrice) {
+					var iouerrormsg = "The sum of sub-record wouldn't be greater than overall sum"
+					var iouerrorcontent = "<div style='display:none' class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+iouerrormsg+"</div>"
+					$("#end-of-list").html(iouerrorcontent)
+					$("#end-of-list div:first-child").slideDown()
 
-					/** set the record in current iou */
-					for (var j=0; j< payer.length; j++) {
-						records["iou"+i.toString()][payer[j].toString()] += 1.0* amount / payer.length
-					}
-					for (var j=0; j< borrower.length; j++) {
-						records["iou"+i.toString()][borrower[j].toString()] -= 1.0* amount / borrower.length
-					}
+					return
 				}
-				/** calculate the overall record */
-				var ids = Object.keys(records.overall)
-				for (var i=0; i< ids.length; i++) {
-					var id = ids[i]
-					for (var j=0; j< ious.length; j++) {
-						if (records["iou"+j.toString()][id]) {
-							records.overall[id] += records["iou"+j.toString()][id]
-						}
-					}
-				}
+
+				var records = {}
 
 				/** get the notes, if not set, use the date instead */
 				var d = new Date()
 				var description = $("#activity-description").val()
-				description = description || "New @"+d.toDateString()
+				description = description || "New record @"+d.toDateString()
 				records.description = description
 
-				/** set the ious number */
-				records.iousNum = ious.length
+				/** set the overall data */
+				records.overall = {
+					price: 1.0 * overallPrice,
+					tax: 1.0 * overallTax,
+					money: 1.0 * overallPrice + 1.0 * overallTax,
+					taxRate: 1.0 * overallTax / overallPrice,
+					shareToAll: 1.0 * overallPrice + 1.0 * overallTax - srecordSum * (1.0 + 1.0 * overallTax / overallPrice)
+				}
+
+				/** initialize the names list */
+				records.names = {}
+
+				/** initialize the summery list */
+				records.summary = {}
+
+				/** process data */
+				/** get the payers */
+				records.payers = {
+					raw: payers
+				}
+				payers = payers.split(";")
+				var j = 0
+				while (j<payers.length) {
+					if (payers[j].length == 0) {
+						payers.splice(j, 1)
+					} else {
+						j += 1
+					}
+				}
+				console.log(payers)
+				for (var j=0; j< payers.length; j++) {
+					var payerName = payers[j].slice(0, payers[j].lastIndexOf("("))
+					payers[j] = payers[j].slice(payers[j].lastIndexOf("(")+1, payers[j].length-1)
+					if (typeof records.names[payers[j]] == "undefined") {
+						records.names[payers[j]] = payerName
+						records.summary[payers[j]] = {}
+					}
+				}
+				records.payers.array = payers
+
+				/** get the borrowers */
+				records.borrowers = {
+					raw: borrowers
+				}
+				borrowers = borrowers.split(";")
+				var j = 0
+				while (j<borrowers.length) {
+					if (borrowers[j].length == 0) {
+						borrowers.splice(j, 1)
+					} else {
+						j += 1
+					}
+				}
+				for (var j=0; j< borrowers.length; j++) {
+					var borrowerName = borrowers[j].slice(0, borrowers[j].lastIndexOf("("))
+					borrowers[j] = borrowers[j].slice(borrowers[j].lastIndexOf("(")+1, borrowers[j].length-1)
+					if (typeof records.names[borrowers[j]] == "undefined") {
+						records.names[borrowers[j]] = borrowerName
+						records.summary[borrowers[j]] = {}
+					}
+				}
+				records.borrowers.array = borrowers
+
+				console.log(records)
+
+				/** calculate the share bill to all */
+				for (var i=0; i< borrowers.length; i++) {
+					for (var j=0; j < payers.length; j++) {
+						if (records.summary[borrowers[i]][payers[j]]) {
+							records.summary[borrowers[i]][payers[j]] += - 1.0 * records.overall.shareToAll / borrowers.length / payers.length
+						} else {
+							records.summary[borrowers[i]][payers[j]] = - 1.0 * records.overall.shareToAll / borrowers.length / payers.length
+						}
+						if (records.summary[payers[j]][borrowers[i]]) {
+							records.summary[payers[j]][borrowers[i]] += 1.0 * records.overall.shareToAll / borrowers.length / payers.length
+						} else {
+							records.summary[payers[j]][borrowers[i]] = 1.0 * records.overall.shareToAll / borrowers.length / payers.length
+						}
+					}
+				}
+
+				records.subRecord = {}
+				records.subRecord.length = srecord.length
+				for (var i = 0; i<srecord.length; i++) {
+					/** initialize the object for the sub-record */
+					records.subRecord[i] = {}
+
+					var subPrice = 1.0 * $(srecord[i]).find("#record-price").val()
+					var subTax = 1.0 * $(srecord[i]).find("#record-tax").val()
+					var subMoney = 1.0 * $(srecord[i]).find("#record-money").val()
+					var subBorrowers = $(srecord[i]).find("#record-borrower").val()
+
+					records.subRecord[i].price = subPrice
+					records.subRecord[i].tax = subTax
+					records.subRecord[i].money = subMoney
+					records.subRecord[i].borrowers = {
+						raw: subBorrowers
+					}
+					subBorrowers = subBorrowers.split(";")
+					var j = 0
+					while (j<subBorrowers.length) {
+						if (subBorrowers[j].length == 0) {
+							subBorrowers.splice(j, 1)
+						} else {
+							j += 1
+						}
+					}
+					for (var j=0; j< subBorrowers.length; j++) {
+						var subBorrowerName = subBorrowers[j].slice(0, subBorrowers[j].lastIndexOf("("))
+						subBorrowers[j] = subBorrowers[j].slice(subBorrowers[j].lastIndexOf("(")+1, subBorrowers[j].length-1)
+						if (typeof records.names[subBorrowers[j]] == "undefined") {
+							records.names[subBorrowers[j]] = subBorrowerName
+							records.summary[subBorrowers[j]] = {}
+						}
+					}
+					records.subRecord[i].borrowers.array = subBorrowers
+
+					/** calculate the sub-record */
+					for (var j=0; j< subBorrowers.length; j++) {
+						for (var k=0; k<payers.length; k++) {
+							if (records.summary[subBorrowers[j]][payers[k]]) {
+								records.summary[subBorrowers[j]][payers[k]] += - 1.0 * subMoney / subBorrowers.length / payers.length
+							} else {
+								records.summary[subBorrowers[j]][payers[k]] = - 1.0 * subMoney / subBorrowers.length / payers.length
+							}
+							if (records.summary[payers[k]][subBorrowers[j]]) {
+								records.summary[payers[k]][subBorrowers[j]] += 1.0 * subMoney / subBorrowers.length / payers.length
+							} else {
+								records.summary[payers[k]][subBorrowers[j]] = 1.0 * subMoney / subBorrowers.length / payers.length
+							}
+						}
+					}
+				}
 
 				activity.records = records
 				console.log(records)	
@@ -213,51 +491,31 @@
 				console.log("confirm the bill")
 			},
 			fulfill: function() {
+
+				// return 
 				var records = activity.records
 
-				/** Fulfill the notes, if not set, use the date instead */
-				var d = new Date()
-				var description = $("#activity-description").val()
-				description = description || "New @"+d.toDateString()
 
 				/** Fulfill infos into table */
 				$(".add-activity-summary").html("")
-				$(".add-activity-summary").append("<div class='panel-heading'>"+description+"</div><table class='table'></table>")
-				$(".add-activity-summary > table").append("<tr><th style='text-align: center;'>#IOU</th><th>Person</th><th>Amount</th></tr>")
-				for (var i=0; i< records.iousNum; i++) {
-					var listmsg = ""
-					var ids = Object.keys(records["iou"+i.toString()])
-					for (var j=0; j< ids.length; j++) {
-						var id = ids[j]
-						var name = records.names[id]
-						var amount = records["iou"+i.toString()][id]
-						listmsg += "<tr>"
-						if (j==0) {
-							listmsg += "<th rowspan='"+ids.length.toString()+"' style='text-align: center; vertical-align: middle;'>"+(i+1).toString()+"</th>"
+				$(".add-activity-summary").append("<div class='panel-heading'>"+records.description+"</div><table class='table'></table>")
+				$(".add-activity-summary > table").append("<tr><th class='text-right'>From</th><th><span class='glyphicon glyphicon-arrow-right'></span></th><th class='text-left'>To</th><th>Amount</th></tr>")
+				var summary = records.summary
+				summaryKeys = Object.keys(summary)
+				for (var i=0; i< summaryKeys.length; i++) {
+					var from = summaryKeys[i]
+					var toIds = Object.keys(summary[from])
+					for (var j=0; j<toIds.length; j++ ) {
+						var to = toIds[j]
+						if (1.0 * (summary[from][to]) <= -0.005) {
+							var nameFrom = records.names[from]
+							var nameTo = records.names[to]
+							var listmsg = "<tr><td class='text-right'>"+nameFrom+"</td><td><span class='glyphicon glyphicon-arrow-right'></span></td><td class='text-left'>"+nameTo+"</td><td>"+(-summary[from][to]).toFixed(2)+"</td></tr>"
+							$(".add-activity-summary > table").append(listmsg)
 						}
-						listmsg += "<td>"+name+"</td><td>"+amount+"</td>"
-						listmsg += "</tr>"
 					}
-					$(".add-activity-summary > table").append(listmsg)
 
 				}
-
-				/** Fulfill the summary */
-				$(".add-activity-summary > table").append("<tr><th colspan='3'>Summary</th></tr>")
-				var listmsg = ""
-				var ids = Object.keys(records.overall)
-				for (var j=0; j< ids.length; j++) {
-					var id = ids[j]
-					var name = records.names[id]
-					var amount = records.overall[id]
-					listmsg += "<tr>"
-					if (j==0) {
-						listmsg += "<th rowspan='"+ids.length.toString()+"'></th>"
-					}
-					listmsg += "<td>"+name+"</td><td>"+amount+"</td>"
-					listmsg += "</tr>"
-				}
-				$(".add-activity-summary > table").append(listmsg)
 			},
 			reset: function() {
 				if (activity.keep) {

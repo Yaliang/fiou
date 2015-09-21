@@ -94,6 +94,30 @@ DataService = {
 				}
 			}
 		})
+	},
+	saveNewActivity: function(data, options) {
+		var description = data.description
+		var currentUser = Parse.User.current()
+		var records = []
+		var Activity = Parse.Object.extend("Activity")
+
+		var activ = new Activity()
+		activ.set("createdByWho", currentUser)
+		activ.set("description", description)
+		activ.set("records", records)
+
+		var acl = new Parse.ACL();
+		acl.setPublicReadAccess(true);
+		acl.setWriteAccess(currentUser.id, true);
+		activ.setACL(acl)
+
+		activ.save(null, {
+			success: function(activObj) {
+				if (options.callback) {
+					options.callback(activObj, options)
+				}
+			}
+		})
 
 	}
 }
