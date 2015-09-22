@@ -201,7 +201,6 @@
 				}
 				activity.keep = true
 				pt.loadPage("contacts")
-				console.log(formEle)
 			},
 			setBorrower: function(formEle) {
 				var options = {}
@@ -242,7 +241,6 @@
 				}
 				activity.keep = true
 				pt.loadPage("contacts")
-				console.log(formEle)
 			},
 			updateOverallMoney: function() {
 				/** check overall price */
@@ -480,13 +478,11 @@
 				}
 
 				activity.records = records
-				console.log(records)	
 
 				activity.keep = true
 				pt.loadPage("confirmActivity")
 
 
-				console.log("confirm the bill")
 			},
 			fulfill: function() {
 
@@ -611,10 +607,8 @@
 			}
 		}
 
-		console.log("run")
 
 		$(document).on("pagebeforeshow", "#addActivity", function() {
-			console.log("show")
 			activity.reset()
 		})
 
