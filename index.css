@@ -42,5 +42,9 @@
 }
 
 .ui-page-active {
-    z-index: 98
+    z-index: 98;
+}
+
+.header-btn {
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
 }

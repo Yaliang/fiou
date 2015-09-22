@@ -20,7 +20,7 @@
 				<span class="input-group-addon" id="record-payer-addon">
 					<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
 				</span>
-				<input type="text" class="form-control" id="record-payer" placeholder="Payer" readOnly="readOnly" aria-describedby="record-payer-addon" onclick="activity.setPayer($('#basic-info-form'))" data-enhance="false">
+				<input type="text" class="form-control" id="record-payer" placeholder="Payer" readOnly="readOnly" aria-describedby="record-payer-addon" onclick="activity.setPayer($('#basic-info-form'))" onfocus="activity.setPayer($('#basic-info-form'))" data-enhance="false">
 			</div>
 			<div class="input-group" data-enhance="false">
 				<span class="input-group-addon" id="record-price-addon">
@@ -44,7 +44,7 @@
 				<span class="input-group-addon" id="record-borrower-addon">
 					<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
 				</span>
-				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Bill" readOnly="readOnly" aria-describedby="record-borrower-addon" onclick="activity.setBorrower($('#basic-info-form'))" data-enhance="false">
+				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Bill" readOnly="readOnly" aria-describedby="record-borrower-addon" onclick="activity.setBorrower($('#basic-info-form'))" onfocus="activity.setBorrower($('#basic-info-form'))" data-enhance="false">
 			</div>
 		</div>
 
@@ -152,7 +152,7 @@
 						event.data.find("#record-money").val(subPrice.toFixed(2))
 					}
 				})
-				newForm.find("#record-borrower").bind("click", newForm, function(event) {
+				newForm.find("#record-borrower").bind("click focus", newForm, function(event) {
 					activity.setBorrower(event.data)
 					event.data.find("#end-of-sub-record").html("")
 				})
@@ -359,7 +359,7 @@
 				/** initialize the names list */
 				records.names = {}
 
-				/** initialize the summery list */
+				/** initialize the summary list */
 				records.summary = {}
 
 				/** process data */
@@ -409,8 +409,6 @@
 					}
 				}
 				records.borrowers.array = borrowers
-
-				console.log(records)
 
 				/** calculate the share bill to all */
 				for (var i=0; i< borrowers.length; i++) {
@@ -501,7 +499,7 @@
 				$(".add-activity-summary").append("<div class='panel-heading'>"+records.description+"</div><table class='table'></table>")
 				$(".add-activity-summary > table").append("<tr><th class='text-right'>From</th><th><span class='glyphicon glyphicon-arrow-right'></span></th><th class='text-left'>To</th><th>Amount</th></tr>")
 				var summary = records.summary
-				summaryKeys = Object.keys(summary)
+				var summaryKeys = Object.keys(summary)
 				for (var i=0; i< summaryKeys.length; i++) {
 					var from = summaryKeys[i]
 					var toIds = Object.keys(summary[from])
@@ -517,11 +515,98 @@
 
 				}
 			},
+			confirm: function() {
+				DataService.createNewActivity({
+					/** data */
+					description: activity.records.description
+				}, {
+					/** options */
+					records: activity.records,
+					callback: function(activObj, options) {
+						/** this is the callback when a new activity is created */
+						$.mobile.loading( 'show', {
+							text: "Pending", 
+							textVisible: "true", 
+							html: "<span style='background-position: center;' class='ui-icon-loading'></span><h1 id='loader-text'>Pending</h1><div style='position:fixed; top:0; left:0; width:100vw; height: 100vh; background-color:grey; opacity:0.75'></div>"
+						})
+						var summary = options.records.summary
+						options.records.pending = {
+							length: 0
+						}
+						var summaryKeys = Object.keys(summary)
+						for (var i=0; i< summaryKeys.length; i++) {
+							var payerId = summaryKeys[i]
+							var targetIds = Object.keys(summary[payerId])
+							for (var j=0; j < targetIds.length; j++) {
+								var borrowerId = targetIds[j]
+								if (1.0 * (summary[payerId][borrowerId] >= 0.005)) {
+									var pendingId = options.records.pending.length
+									options.records.pending[pendingId] = {
+										payer: payerId,
+										borrower: borrowerId,
+										ammount: 1.0 * summary[payerId][borrowerId].toFixed(2),
+										activ: activObj.id,
+										status: 0
+									}
+									options.records.pending.length += 1
+									DataService.createNewRecordWithActivityId({
+										/** data */
+										payer: payerId,
+										borrower: borrowerId,
+										amount: 1.0 * summary[payerId][borrowerId].toFixed(2),
+										activ: activObj.id,
+
+									},{
+										/** options */
+										records: options.records,
+										activ: activObj.id,
+										pendingId: pendingId,
+										callback: function(recordObj, options) {
+											/** this is the callback when a new record is created */
+											options.records.pending[options.pendingId].status = 1
+											DataService.addRecordIntoActivity({
+												/** data */
+												activ: options.activ,
+												record: recordObj.id
+											},{
+												/** options */
+												records: options.records,
+												pendingId: options.pendingId,
+												callback: function(activObj, options) {
+													/** this is the callback when the new record's id saved to the activity object */
+													delete options.records.pending[options.pendingId]
+													options.records.pending.length -= 1
+													if (options.records.pending.length == 0) {
+														$.mobile.loading( 'show', {
+															text: "Pending", 
+															textVisible: "true", 
+															html: "<div class='row add-activity-server-saved'><button type='button' style='z-index:100000000' class='col-xs-offset-1 col-xs-10 btn btn-primary' id='server-saved-activity-btn' onclick='activity.reset(); $.mobile.loading(\"hide\")' data-nav='back' data-enhance='false'><span class='small' data-nav='back'>Done</span></button></div><div style='position:fixed; top:0; left:0; width:100vw; height: 100vh; background-color:grey; opacity:0.75'></div>"
+														})
+													}
+												}
+											})
+										}
+									})
+								}
+							}
+						}
+
+
+					}
+				})
+			},
 			reset: function() {
 				if (activity.keep) {
 					activity.keep = false
 				} else {
-					$(".iou-form").remove()
+					$("#activity-description").val("")
+					$("#basic-info-form").find("#record-payer").val("")
+					$("#basic-info-form").find("#record-price").val("")
+					$("#basic-info-form").find("#record-tax").val("")
+					$("#basic-info-form").find("#record-money").val("")
+					$("#basic-info-form").find("#record-borrower").val("")
+					
+					$(".sub-record-form").remove()
 				}
 			}
 		}

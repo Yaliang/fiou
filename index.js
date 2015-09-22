@@ -95,7 +95,7 @@ DataService = {
 			}
 		})
 	},
-	saveNewActivity: function(data, options) {
+	createNewActivity: function(data, options) {
 		var description = data.description
 		var currentUser = Parse.User.current()
 		var records = []
@@ -118,7 +118,57 @@ DataService = {
 				}
 			}
 		})
+	},
+	createNewRecordWithActivityId: function(data, options) {
+		var User = Parse.Object.extend("User")
+		var payer = new User()
+		payer.id = data.payer
+		var borrower = new User()
+		borrower.id = data.borrower
+		var amount = data.amount
+		var Activity = Parse.Object.extend("Activity")
+		var activ = new Activity()
+		activ.id = data.activ
+		var currentUser = Parse.User.current()
 
+		var Record = Parse.Object.extend("Record")
+		var rec = new Record()
+
+		rec.set("payer", payer)
+		rec.set("borrower", borrower)
+		rec.set("amount", amount)
+		rec.set("inWhichActivity", activ)
+
+		var acl = new Parse.ACL()
+		acl.setPublicReadAccess(true)
+		acl.setWriteAccess(currentUser.id, true)
+		rec.setACL(acl)
+
+		rec.save(null, {
+			success: function(recordObj) {
+				if (options.callback) {
+					options.callback(recordObj, options)
+				}
+			}
+		})
+	},
+	addRecordIntoActivity: function(data, options) {
+		var Activity = Parse.Object.extend("Activity")
+		var query = new Parse.Query(Activity)
+		console.log(data.activ)
+
+		query.get(data.activ, {
+			success: function(activObj) {
+				activObj.addUnique("records", data.record)
+				activObj.save(null, {
+					success: function(activObj) {
+						if (options.callback) {
+							options.callback(activObj, options)
+						}
+					}
+				})
+			}
+		})
 	}
 }
 
