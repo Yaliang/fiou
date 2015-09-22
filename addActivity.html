@@ -20,7 +20,7 @@
 				<span class="input-group-addon" id="record-payer-addon">
 					<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
 				</span>
-				<input type="text" class="form-control" id="record-payer" placeholder="Payer" readOnly="readOnly" aria-describedby="record-payer-addon" onclick="activity.setPayer($('#basic-info-form'))" onfocus="activity.setPayer($('#basic-info-form'))" data-enhance="false">
+				<input type="text" class="form-control" id="record-payer" placeholder="Payer" readOnly="readOnly" aria-describedby="record-payer-addon" onclick="activity.setPayer($('#basic-info-form'))" data-enhance="false">
 			</div>
 			<div class="input-group" data-enhance="false">
 				<span class="input-group-addon" id="record-price-addon">
@@ -44,7 +44,7 @@
 				<span class="input-group-addon" id="record-borrower-addon">
 					<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
 				</span>
-				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Bill" readOnly="readOnly" aria-describedby="record-borrower-addon" onclick="activity.setBorrower($('#basic-info-form'))" onfocus="activity.setBorrower($('#basic-info-form'))" data-enhance="false">
+				<input type="text" class="form-control" id="record-borrower" placeholder="All Person Sharing Bill" readOnly="readOnly" aria-describedby="record-borrower-addon" onclick="activity.setBorrower($('#basic-info-form'))" data-enhance="false">
 			</div>
 		</div>
 
@@ -152,7 +152,7 @@
 						event.data.find("#record-money").val(subPrice.toFixed(2))
 					}
 				})
-				newForm.find("#record-borrower").bind("click focus", newForm, function(event) {
+				newForm.find("#record-borrower").bind("click", newForm, function(event) {
 					activity.setBorrower(event.data)
 					event.data.find("#end-of-sub-record").html("")
 				})
