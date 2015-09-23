@@ -422,7 +422,10 @@
 		}
 
 		/** pop a history state of the previous page */
-		window.history.back()
+		// window.history.back()
+		$( ":mobile-pagecontainer" ).pagecontainer( "change", "#"+this.prevElement.attr("id"), {
+			transition: "none",
+		} );
 
 	}
 
