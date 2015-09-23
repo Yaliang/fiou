@@ -384,6 +384,7 @@
 
 				$( ":mobile-pagecontainer" ).pagecontainer( "change", "#"+obj.pageId, {
 					transition: "none",
+					changeHash: "false",
 				} );
 			}
 		}, 100, this)
@@ -425,6 +426,7 @@
 		// window.history.back()
 		$( ":mobile-pagecontainer" ).pagecontainer( "change", "#"+this.prevElement.attr("id"), {
 			transition: "none",
+			changeHash: "false"
 		} );
 
 	}
