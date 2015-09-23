@@ -21,12 +21,9 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		console.log("run")
-
-
 
 		$(document).on("pagebeforeshow", "#confirmActivity", function() {
-			console.log("show")
+			console.log("confirm activity before show")
 			if (typeof(activity) != "undefined" && activity.fulfill) {
 				activity.fulfill()
 			} else {

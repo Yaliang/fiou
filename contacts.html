@@ -76,14 +76,14 @@
 		}
 
 		$(document).on("pagebeforeshow", "#contacts", function() {
-			console.log("show")
+			console.log("contacts page before show")
 			contacts.reset()
 		})
 
 		$(document).on("pageshow", "#contacts", function() {
-			console.log("show")
+			console.log("contact page show")
 			if (ajaxloader.callback) {
-				console.log("a callback has set")
+				console.log("a callback has set, page transfer will fire it later.")
 			} else {
 				contacts.buildList()
 			}
