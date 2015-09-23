@@ -308,6 +308,8 @@
 
 		$(document).on("pageshow", "#"+obj.pageId, this, function(event) {
 
+			console.log("a default pageshow event is fired on #"+$(this).attr("id"))
+
 			if (event.data.ajaxloader.callback) {
 				event.data.ajaxloader.callback()
 				event.data.ajaxloader.callback = false
@@ -357,9 +359,11 @@
 	 */
 	pageTransition.prototype.loadPage = function(id) {
 		this.ajaxloader.get(id)
+		console.log("loaderInterval setup")
 		this.loaderInterval = setInterval(function(a) {
 			if (a.ajaxloader.done == true) {
 				window.clearInterval(a.loaderInterval)
+				console.log("loaderInterval has cleared")
 				var obj = a.ajaxloader.obj
 				var newPage = null
 
