@@ -540,7 +540,7 @@
 									options.records.pending[pendingId] = {
 										payer: payerId,
 										borrower: borrowerId,
-										ammount: 1.0 * summary[payerId][borrowerId].toFixed(2),
+										amount: 1.0 * summary[payerId][borrowerId].toFixed(2),
 										activ: activObj.id,
 										status: 0
 									}
@@ -570,15 +570,21 @@
 												pendingId: options.pendingId,
 												callback: function(activObj, options) {
 													/** this is the callback when the new record's id saved to the activity object */
-													delete options.records.pending[options.pendingId]
-													options.records.pending.length -= 1
-													if (options.records.pending.length == 0) {
-														$.mobile.loading( 'show', {
-															text: "Pending", 
-															textVisible: "true", 
-															html: "<div class='row add-activity-server-saved'><button type='button' style='z-index:100000000' class='col-xs-offset-1 col-xs-10 btn btn-primary' id='server-saved-activity-btn' onclick='activity.reset(); $.mobile.loading(\"hide\")' data-nav='back' data-enhance='false'><span class='small' data-nav='back'>Done</span></button></div><div style='position:fixed; top:0; left:0; width:100vw; height: 100vh; background-color:grey; opacity:0.75'></div>"
-														})
-													}
+													activity.checkPendings(options)
+												}
+											})
+											DataService.updateSummaryInConnect({
+												/** data */
+												payer: recordObj.get("payer"),
+												borrower: recordObj.get("borrower"),
+												amount: recordObj.get("amount"),
+											}, {
+												/** options */
+												records: options.records,
+												pendingId: options.pendingId,
+												callback: function(conObj, options) {
+													/** this is the callback when the new record's amount is saved to the connection object */
+													activity.checkPendings(options)
 												}
 											})
 										}
@@ -586,10 +592,22 @@
 								}
 							}
 						}
-
-
 					}
 				})
+			},
+			checkPendings: function(options) {
+				options.records.pending[options.pendingId].status += 1
+				if (options.records.pending[options.pendingId].status >= 3) {
+					delete options.records.pending[options.pendingId]
+					options.records.pending.length -= 1
+				}
+				if (options.records.pending.length == 0) {
+					$.mobile.loading( 'show', {
+						text: "Pending", 
+						textVisible: "true", 
+						html: "<div class='row add-activity-server-saved'><button type='button' style='z-index:100000000' class='col-xs-offset-1 col-xs-10 btn btn-primary' id='server-saved-activity-btn' onclick='activity.reset(); $.mobile.loading(\"hide\")' data-nav='back' data-enhance='false'><span class='small' data-nav='back'>Done</span></button></div><div style='position:fixed; top:0; left:0; width:100vw; height: 100vh; background-color:grey; opacity:0.75'></div>"
+					})
+				}
 			},
 			reset: function() {
 				console.log(activity.keep)

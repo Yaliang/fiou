@@ -9,6 +9,7 @@ DataService = {
 	 */
 	getUserNameByUserId : function(userid, options) {
 		options = options || {}
+
 		var User = Parse.Object.extend("User")
 		var query = new Parse.Query(User)
 		query.get(userid, {
@@ -31,6 +32,7 @@ DataService = {
 	 */
 	addConnectByUserId : function(userid, options) {
 		options = options || {}
+
 		var User = Parse.Object.extend("User")
 		var currentUser = Parse.User.current()
 		var targetUser = new User()
@@ -45,11 +47,17 @@ DataService = {
 		}
 
 		var Connection = Parse.Object.extend("Connection")
-		var query = new Parse.Query(Connection)
-
+		var queryDirect1 = new Parse.Query(Connection)
 		
-		query.equalTo("owner", currentUser)
-		query.equalTo("target", targetUser)
+		queryDirect1.equalTo("owner", currentUser)
+		queryDirect1.equalTo("target", targetUser)
+
+		var queryDirect2 = new Parse.Query(Connection)
+		
+		queryDirect2.equalTo("owner", targetUser)
+		queryDirect2.equalTo("target", currentUser)
+
+		var query = Parse.Query.or(queryDirect1, queryDirect2)
 		/** check the current state between the current user and target user */
 		query.find({
 			success: function(connections) {
@@ -59,6 +67,13 @@ DataService = {
 
 					connection.set("owner", currentUser)
 					connection.set("target", targetUser)
+					connection.set("isMain", true)
+					connection.set("summary", 0)
+
+					var acl = new Parse.ACL();
+					acl.setPublicReadAccess(true);
+					acl.setWriteAccess(currentUser.id, true);
+					connection.setACL(acl)
 
 					connection.save(null, {
 						success: function(conObj) {
@@ -67,7 +82,37 @@ DataService = {
 							}
 						}
 					})
+				} else if (connections.length == 1) {
+					/** in this case they might been connected in one direction */
+					if (connections[0].get("owner").id == currentUser.id) {
+						/** in this case the direction from current user to target user has been set */
+						if (options.callback) {
+							options.callback(options)
+						}
+					} else {
+						/** in this case, we build a new connection from current user to target user and point to the existing connection */
+						var connection = new Connection()
+
+						connection.set("owner", currentUser)
+						connection.set("target", targetUser)
+						connection.set("isMain", false)
+						connection.set("mainConnect", connections[0])
+
+						var acl = new Parse.ACL();
+						acl.setPublicReadAccess(true);
+						acl.setWriteAccess(currentUser.id, true);
+						connection.setACL(acl)
+
+						connection.save(null, {
+							success: function(conObj) {
+								if (options.callback) {
+									options.callback(conObj, options)
+								}
+							}
+						})
+					}
 				} else {
+					/** both directions are connected */
 					if (options.callback) {
 						options.callback(options)
 					}
@@ -81,6 +126,8 @@ DataService = {
 	 * @return {[type]}         [description]
 	 */
 	getConnectionOfCurrentUser: function(options) {
+		options = options || {}
+
 		var currentUser = Parse.User.current()
 
 		var Connection = Parse.Object.extend("Connection")
@@ -95,7 +142,15 @@ DataService = {
 			}
 		})
 	},
+	/**
+	 * The function to create a new activity
+	 * @param  {Object} data    The data to describe the Activity
+	 * @param  {Object} options The options, which include callback or data for the callback are store here
+	 * @return {[type]}         [description]
+	 */
 	createNewActivity: function(data, options) {
+		options = options || {}
+
 		var description = data.description
 		var currentUser = Parse.User.current()
 		var records = []
@@ -119,7 +174,15 @@ DataService = {
 			}
 		})
 	},
+	/**
+	 * The function to create a new record
+	 * @param  {Object} data    The data to describe a Record
+	 * @param  {Object} options The options, including the callback or other data for the callback
+	 * @return {[type]}         [description]
+	 */
 	createNewRecordWithActivityId: function(data, options) {
+		options = options || {}
+
 		var User = Parse.Object.extend("User")
 		var payer = new User()
 		payer.id = data.payer
@@ -152,10 +215,16 @@ DataService = {
 			}
 		})
 	},
+	/**
+	 * The function to connect record with activity
+	 * @param {Object} data    The data to identify the activity
+	 * @param {Object} options The options, including the callback and the potential data to utilize.
+	 */
 	addRecordIntoActivity: function(data, options) {
+		options = options || {}
+
 		var Activity = Parse.Object.extend("Activity")
 		var query = new Parse.Query(Activity)
-		console.log(data.activ)
 
 		query.get(data.activ, {
 			success: function(activObj) {
@@ -169,7 +238,95 @@ DataService = {
 				})
 			}
 		})
-	}
+	},
+	/**
+	 * When some record is add to the server, we also update the summary between the payer and borrower
+	 * The process can help to speed up when the user want to check the summary of records with other users
+	 * @param  {Object} data    The data including the payer, borrower and amount
+	 * @param  {Object} options The options, including the callback or the data for callback
+	 * @return {[type]}         [description]
+	 */
+	updateSummaryInConnect: function(data, options) {
+		options = options || {}
+
+		var Connection = Parse.Object.extend("Connection")
+		var payer = data.payer
+		var borrower = data.borrower
+
+		var queryDirect1 = new Parse.Query(Connection)
+
+		queryDirect1.equalTo("owner", payer)
+		queryDirect1.equalTo("target", borrower)
+
+		var queryDirect2 = new Parse.Query(Connection)
+
+		queryDirect2.equalTo("owner", borrower)
+		queryDirect2.equalTo("target", payer)
+
+		var query = Parse.Query.or(queryDirect1, queryDirect2)
+
+		query.find({
+			success: function(connections) {
+				for (var i = 0; i< connections.length; i++) {
+					if (connections[i].get("isMain") == true) {
+						/** now we find the main connection which is counting the summary */
+						if (connections[i].get("owner").id == payer.id) {
+							/** case: owner is the payer: increase amount directly */
+							connections[i].increment("summary", data.amount)
+							connections[i].save(null, {
+								success: function(conObj) {
+									if (options.callback) {
+										options.callback(conObj, options)
+									}
+								}
+							})
+							break
+						} else if (connections[i].get("owner").id == borrower.id) {
+							/** case: owner is the borrower: decrease amount */
+							connections[i].increment("summary", -1.0 * data.amount)
+							connections[i].save(null, {
+								success: function(conObj) {
+									if (options.callback) {
+										options.callback(conObj, options)
+									}
+								}
+							})
+							break
+						}
+					}
+				}
+			}
+		})
+	},
+	getAllRecordWithUserID: function(data, options) {
+		options = options || {}
+
+		var Record = Parse.Object.extend("Record")
+
+		var User = Parse.Object.extend("User")
+		var queryUser = new User()
+		queryUser.id = data.userid
+
+		var queryUserInPayer = new Parse.Query(Record)
+		queryUserInPayer.equalTo("payer", queryUser)
+
+		var queryUserInBorrower = new Parse.Query(Record)
+		queryUserInBorrower.equalTo("borrower", queryUser)
+
+		var queryAll = Parse.Query.or(queryUserInPayer, queryUserInBorrower)
+
+		queryAll.descending("createdAt")
+		queryAll.limit(data.limit || 10)
+
+		queryAll.find({
+			success: function(records) {
+				if (options.callback) {
+					options.callback(records, options)
+				}
+			}
+		})
+
+	},
 }
 
 user = {
