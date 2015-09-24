@@ -317,6 +317,7 @@ DataService = {
 
 		queryAll.descending("createdAt")
 		queryAll.limit(data.limit || 10)
+		queryAll.skip(data.skip || 0)
 
 		queryAll.find({
 			success: function(records) {
@@ -325,8 +326,55 @@ DataService = {
 				}
 			}
 		})
-
 	},
+	getAllSummaryOfCurrentUser: function(options) {
+		options = options || {}
+
+		var Connection = Parse.Object.extend("Connection")
+		var currentUser = Parse.User.current()
+
+		var queryDirect1 = new Parse.Query(Connection)
+		queryDirect1.equalTo("owner", currentUser)
+		var queryDirect2 = new Parse.Query(Connection)
+		queryDirect2.equalTo("target", currentUser)
+
+		var query = Parse.Query.or(queryDirect1, queryDirect2)
+
+		query.find({
+			success: function(connections) {
+				options.pending = {
+					length: connections.length
+				}
+				options.done = {
+					length: 0
+				}
+				for (var i=0; i< connections.length; i++) {
+					if (connections[i].get("isMain") == true) {
+						/** in the case, that the object we queried is the main object */
+						var amount = connections[i].get("summary")
+						var target = connections[i].get("target")
+						if (connections[i].get("target").id == currentUser.id) {
+							amount = -amount
+							target = connections[i].get("owner")
+						}
+						var j = options.done.length
+						options.done.length += 1
+						options.done[j] = {
+							originalConnection: connections[i],
+							amount: amount,
+							target: target
+						}
+					}
+				}
+
+				/** now all connection is processed */
+				if (options.callback) {
+					options.callback(options)
+				}
+			}
+		})
+
+	}
 }
 
 user = {

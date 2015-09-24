@@ -41,6 +41,10 @@
     display: none !important;
 }
 
+.empty {
+    display: none !important;
+}
+
 .ui-page-active {
     z-index: 98;
 }

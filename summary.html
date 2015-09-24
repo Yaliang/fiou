@@ -1,0 +1,78 @@
+<title>FIOU</title>
+<pageid>summary</pageid>
+
+<header>
+	<h1>Summary</h1>
+	<a class="header-btn" href='#' data-href='' data-nav='back'>
+		<span class="glyphicon glyphicon-chevron-left" data-nav='back' aria-hidden="true"></span>Back
+	</a>
+</header>
+<main>
+	<ul class="list-group" id="summary-list">
+		<li class="list-group-item empty-summary hidden summary-item" data-contact-id="" data-contact-name="" data-amount=""></li>
+	</ul>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<script type="text/javascript">
+		summary = {
+			buildList : function() {
+				/** parse summary of my connection */
+				DataService.getAllSummaryOfCurrentUser({
+					callback: function(options) {
+						for (var i=0; i<options.done.length; i++) {
+							var item = options.done[i]
+
+							/** build the summary item */
+							var contactEle = $(".empty-summary").clone(true)
+							contactEle.removeClass("empty-summary")
+							contactEle.addClass("pending-summary")
+							contactEle.attr("data-contact-id",item.target.id)
+							contactEle.attr("data-amount", item.amount.toString())
+
+							$("#summary-list").append(contactEle)
+
+							/** get the contact name and display it */
+							DataService.getUserNameByUserId(item.target.id ,{
+								/** options */
+								contactEle: contactEle,
+								callback: function(username, userObj, options) {
+									var contactEle = options.contactEle
+									var amount = 1.0 * contactEle.attr("data-amount")
+									contactEle.attr("data-contact-name", username)
+									contactEle.html(username + "<span class='pull-right badge'>"+amount.toFixed(2)+"</span>")
+									contactEle.removeClass("pending-summary")
+									contactEle.removeClass("hidden")
+								}
+							})
+						}
+					}
+				})
+			},
+			reset: function() {
+				var contactEle = $(".empty-summary").clone(true)
+				$("#summary-list").html("")
+				$("#summary-list").append(contactEle)
+			}
+		}
+
+		$(document).on("pagebeforeshow", "#summary", function() {
+			console.log("summary page before show")
+			summary.reset()
+		})
+
+		$(document).on("pageshow", "#summary", function() {
+			console.log("summary page show")
+			if (ajaxloader.callback) {
+				console.log("a callback has set, page transfer will fire it later.")
+			} else {
+
+				summary.buildList()
+			}
+		})
+
+		user.autologin({
+			dest: "@current"
+		})
+	</script>
+</footer>
