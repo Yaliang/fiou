@@ -289,6 +289,8 @@
 		/** set statue bar in ios */
 		if (this.deviceIsIOS9) {
 			console.log("statue bar style not working")
+			newPage.children(".ctrl-page-header").css("border-top", "0px")
+			newPage.children(".ctrl-page-header").css("background-color", "white")
 		} else if (this.deviceIsIOS) {
 			newPage.children(".ctrl-page-header").css("padding-top", "20px")
 			console.log(newPage.find(".header-btn"))
