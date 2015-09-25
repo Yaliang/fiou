@@ -51,7 +51,7 @@
 					$("#connect-btn").html("Working...")
 					user.addConnect(event.data, {
 						callback: function() {
-							$("#connect-btn").attr("disabled", "")
+							$("#connect-btn").removeAttr("disabled")
 							$("#connect-btn").html("Done")
 							$("#connect-btn").bind("click", function(event) {
 								$("#connect-btn").unbind("click")
