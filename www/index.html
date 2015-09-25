@@ -23,6 +23,7 @@
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,700" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
     <link rel="stylesheet" href="./index.css" />
+    <script type="text/javascript" src="cordova.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script type="text/javascript">
         $(document).bind("mobileinit", function(){
@@ -69,6 +70,12 @@
     </div><!-- /page -->
 
     <script type="text/javascript">
+        isPhonegap = false
+        
+        document.addEventListener('deviceready', function() {
+            isPhonegap = true
+        }, false);
+
         window.FastClick.attach(document.body)
 
         pt = pageTransition.init({
