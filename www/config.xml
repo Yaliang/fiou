@@ -71,6 +71,7 @@
         <gap:plugin name="com.phonegap.plugins.barcodescanner" />
     -->
     <gap:plugin name="com.phonegap.plugins.pushplugin" />
+    <gap:plugin name="com.manateeworks.barcodescanner" />
 
     <!-- Define app icon for each platform. -->
     <icon src="icon-192.png" />
