@@ -20,9 +20,11 @@
 		</div>
 	</form>
 
-	<form style="width: 100%; text-align: center;">
-        <input type="button" value="Scan Barcode" onclick="scanner.startScanning()" style="font-size: 40px; width: 300px; height: 50px; margin-top: 100px;"/>
-    </form>
+	<div class='row'>
+		<button type='button' class='col-xs-offset-3 col-xs-6 btn btn-primary' onclick="scanner.startScanning(nativeScanner.init, nativeScanner.callback)" data-enhance='false'>
+			<span class='small'>Scan</span>
+		</button>
+	</div>
 
 	<div class="panel panel-default small">
 		<div class="panel-heading">result</div>
@@ -35,6 +37,55 @@
 <footer>
 	
 	<script type="text/javascript">
+
+		nativeScanner = {
+			init: function(mwbs,constants,dvc){
+
+				console.log('custom init function invoked');
+				
+				Object.keys(platform).forEach(function(reg_codes){
+					mwbs['MWBregisterCode'](constants[reg_codes],"","");
+				});
+
+
+				// console.log('JS registration ends: '+ (new Date()).getTime());
+				// console.log('JS Settings starts: '+ (new Date()).getTime());
+				//settings portion, disable those that are not needed
+
+				/* BEGIN settings CALLS */
+					//if your code doesn't work after changing a few parameters, and there is no error output, uncomment the try-catch, the error will be output in your console
+			//    try{
+				mwbs['MWBsetInterfaceOrientation'] (constants.OrientationPortrait);
+				mwbs['MWBsetOverlayMode'](constants.OverlayModeNone);
+				  //  mwbs['MWBenableHiRes'](true);
+				  //  mwbs['MWBenableFlash'](true);
+				  //  mwbs['MWBsetActiveCodes'](constants.MWB_CODE_MASK_128 | constants.MWB_CODE_MASK_39);
+				  //  mwbs['MWBsetLevel'](2);
+				  //  mwbs['MWBsetFlags'](constants.MWB_CODE_MASK_39, constants.MWB_CFG_CODE39_EXTENDED_MODE);
+				  //  mwbs['MWBsetDirection'](constants.MWB_SCANDIRECTION_VERTICAL | constants.MWB_SCANDIRECTION_HORIZONTAL);
+				mwbs['MWBsetScanningRect'](constants.MWB_CODE_MASK_QR, 20,20,60,60);
+				mwbs['MWBenableZoom'](false);
+				  //  mwbs['MWBsetZoomLevels'](200, 400, 0);
+				  //  mwbs['MWBsetMinLength'](constants.MWB_CODE_MASK_39, 4);
+				  //  mwbs['MWBsetMaxThreads'](1);
+				  //  mwbs['MWBcloseScannerOnDecode'](false);
+						
+			},
+			callback: function(result) {
+				if (result.type == 'Cancel'){
+					//Perform some action on scanning canceled if needed
+				} else if (result && result.code){
+					// setTimeout(function(){                  //
+					//    BarcodeScanner.MWBresumeScanning();  // Use this sample when using mwbs['MWBcloseScannerOnDecode'](false);
+					// },2000);                                //
+
+					$("#scan-result").html(result.code)
+
+				}
+
+			}
+		}
+
 		qrdecoder = {
 			extract: function() {
 				var reader = new FileReader();
