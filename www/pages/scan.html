@@ -8,7 +8,7 @@
 	</a>
 </header>
 <main>
-	<form class="form-group">
+	<form class="form-group" onclick="cordova.plugins.barcodeScanner.scan(phonegapScan.success, phonegapScan.error)">
 		<div style="height: 182px" data-enhance="false">
 			<div class="row">
 				<img class="center-block" height="182px" style="opacity:0.3" src="./script/jsqrcode-master/qrcode-sample-blur.png"></img>
@@ -16,7 +16,7 @@
 			<div class="row" style="position: relative; top: -182px; height: 182px; margin: auto; margin-bottom: -182px; width: 182px;">
 				<p class="text-center" style="margin-top: 60px; margin-bottom: 0; line-height: 2; font-weight: bold; opacity: 0.7;">Tap here to capture a photo with QRcode</p>
 			</div>
-			<input type="file" style="margin: auto; position: relative; top: -182px; opacity: 0; height: 182px; margin-bottom: -182px;" class="form-control" id="scan-file" placeholder="QRcode" data-enhance="false" onchange="qrdecoder.extract()" onclick="cordova.plugins.barcodeScanner.scan(phonegapScan.success, phonegapScan.error)">
+			<input type="file" style="margin: auto; position: relative; top: -182px; opacity: 0; height: 182px; margin-bottom: -182px;" class="form-control" id="scan-file" placeholder="QRcode" data-enhance="false" onchange="qrdecoder.extract()">
 		</div>
 	</form>
 
@@ -36,7 +36,7 @@
 			success: function(result) {
 				if (result.cancelled == false) {
 					$("#scan-result").html(result.text)
-					qrdecoder.reaction(result)
+					qrdecoder.reaction(result.text)
 				}
 			},
 			error: function(error) {
@@ -82,9 +82,15 @@
 			}
 		}	
 
+		$(document).on("pagebeforeshow", "#scan", function() {
+			console.log("scan page before show")
+			if (typeof(cordova) != "undefined") {
+				cordova.plugins.barcodeScanner.scan(phonegapScan.success, phonegapScan.error)
+			}
+		})
 
-		if (isPhonegap) {
-			cordova.plugins.barcodeScanner.scan(phonegapScan.success, phonegapScan.error)
+		if (typeof(cordova) != "undefined") {
+			$("#scan-file").remove()
 		}
 	</script>
 </footer>

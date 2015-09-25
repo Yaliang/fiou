@@ -70,7 +70,11 @@
     </div><!-- /page -->
 
     <script type="text/javascript">
-        isPhonegap = true
+        isPhonegap = false
+
+        if (typeof(cordova) != "undefined") {
+            isPhonegap = true
+        }
 
         window.FastClick.attach(document.body)
 
