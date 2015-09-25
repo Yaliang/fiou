@@ -26,6 +26,12 @@
 		</button>
 	</div>
 
+	<div class='row'>
+		<button type='button' class='col-xs-offset-3 col-xs-6 btn btn-primary' onclick="cordova.plugins.barcodeScanner.scan(phonegapScan.success, phonegapScan.error)" data-enhance='false'>
+			<span class='small'>Phonegap Scan</span>
+		</button>
+	</div>
+
 	<div class="panel panel-default small">
 		<div class="panel-heading">result</div>
 		<div class="panel-body">
@@ -37,6 +43,17 @@
 <footer>
 	
 	<script type="text/javascript">
+
+		phonegapScan = {
+			success: function(result) {
+				if (result.cancelled == false) {
+					$("#scan-result").html(result.text)
+				}
+			},
+			error: function(error) {
+				$("#scan-result").html(error)
+			}
+		}
 
 		nativeScanner = {
 			init: function(mwbs,constants,dvc){
