@@ -71,7 +71,11 @@
 
     <script type="text/javascript">
         isPhonegap = false
-        
+
+        document.addEventListener('load', function() {
+            isPhonegap = true
+        }, false);
+
         document.addEventListener('deviceready', function() {
             isPhonegap = true
         }, false);
