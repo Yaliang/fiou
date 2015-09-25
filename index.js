@@ -556,7 +556,7 @@ ajaxloader = {
 	 * @return {[type]}    [description]
 	 */
 	get : function(id) {
-		var href = "./"+id+".html"
+		var href = "./pages/"+id+".html"
 		ajaxloader.done = false
 		$.get(href, function(data) {
 			ajaxloader.extract(data)
