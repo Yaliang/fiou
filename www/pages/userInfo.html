@@ -46,11 +46,17 @@
 				})
 				$("#connect-btn").html("Add Connection")
 				$("#connect-btn").bind("click", userid, function(event) {
+					$("#connect-btn").unbind("click")
+					$("#connect-btn").attr("disabled", "disabled")
 					$("#connect-btn").html("Working...")
 					user.addConnect(event.data, {
 						callback: function() {
-							$("#connect-btn").unbind("click")
+							$("#connect-btn").removeAttr("disabled")
 							$("#connect-btn").html("Done")
+							$("#connect-btn").bind("click", function(event) {
+								$("#connect-btn").unbind("click")
+								pt.loadPage("home")
+							})
 						}
 					})
 				})

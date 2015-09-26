@@ -287,7 +287,7 @@
 		$("body").append(newPage)
 
 		/** set statue bar in ios */
-		if (this.deviceIsIOS9) {
+		if (this.deviceIsIOS9 && !isPhonegap) {
 			console.log("statue bar style not working")
 			newPage.children(".ctrl-page-header").css("border-top", "0px")
 			newPage.children(".ctrl-page-header").css("background-color", "white")

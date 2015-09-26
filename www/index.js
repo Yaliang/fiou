@@ -73,13 +73,32 @@ DataService = {
 					var acl = new Parse.ACL();
 					acl.setPublicReadAccess(true);
 					acl.setWriteAccess(currentUser.id, true);
+					acl.setWriteAccess(targetUser.id, true);
 					connection.setACL(acl)
 
 					connection.save(null, {
 						success: function(conObj) {
-							if (options.callback) {
-								options.callback(conObj, options)
-							}
+							var connectionBack = new Connection()
+							connectionBack.set("owner", targetUser)
+							connectionBack.set("target", currentUser)
+							connectionBack.set("isMain", false)
+							connectionBack.set("mainConnect", conObj)
+
+							var aclBack = new Parse.ACL();
+							aclBack.setPublicReadAccess(true);
+							aclBack.setWriteAccess(currentUser.id, true);
+							aclBack.setWriteAccess(targetUser.id, true);
+							connectionBack.setACL(aclBack)
+
+							connectionBack.save(null, {
+								success: function(conObjBack) {
+									options.setBothDirection = true
+									options.connections = [conObj, conObjBack]
+									if (options.callback) {
+										options.callback(conObjBack, options)
+									}
+								}
+							})
 						}
 					})
 				} else if (connections.length == 1) {
@@ -101,6 +120,7 @@ DataService = {
 						var acl = new Parse.ACL();
 						acl.setPublicReadAccess(true);
 						acl.setWriteAccess(currentUser.id, true);
+						acl.setWriteAccess(targetUser.id, true);
 						connection.setACL(acl)
 
 						connection.save(null, {
@@ -247,6 +267,7 @@ DataService = {
 	 * @return {[type]}         [description]
 	 */
 	updateSummaryInConnect: function(data, options) {
+		console.log("start update")
 		options = options || {}
 
 		var Connection = Parse.Object.extend("Connection")

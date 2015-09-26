@@ -71,10 +71,10 @@
 
     <script type="text/javascript">
         isPhonegap = false
-        
-        document.addEventListener('deviceready', function() {
+
+        if (typeof(cordova) != "undefined") {
             isPhonegap = true
-        }, false);
+        }
 
         window.FastClick.attach(document.body)
 

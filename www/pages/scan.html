@@ -8,7 +8,7 @@
 	</a>
 </header>
 <main>
-	<form class="form-group">
+	<form class="form-group" onclick="cordova.plugins.barcodeScanner.scan(phonegapScan.success, phonegapScan.error)">
 		<div style="height: 182px" data-enhance="false">
 			<div class="row">
 				<img class="center-block" height="182px" style="opacity:0.3" src="./script/jsqrcode-master/qrcode-sample-blur.png"></img>
@@ -31,6 +31,19 @@
 <footer>
 	
 	<script type="text/javascript">
+
+		phonegapScan = {
+			success: function(result) {
+				if (result.cancelled == false) {
+					$("#scan-result").html(result.text)
+					qrdecoder.reaction(result.text)
+				}
+			},
+			error: function(error) {
+				$("#scan-result").html(error)
+			}
+		}
+
 		qrdecoder = {
 			extract: function() {
 				var reader = new FileReader();
@@ -68,5 +81,16 @@
 				$("#scan-result").html("")
 			}
 		}	
+
+		$(document).on("pagebeforeshow", "#scan", function() {
+			console.log("scan page before show")
+			if (typeof(cordova) != "undefined") {
+				cordova.plugins.barcodeScanner.scan(phonegapScan.success, phonegapScan.error)
+			}
+		})
+
+		if (typeof(cordova) != "undefined") {
+			$("#scan-file").remove()
+		}
 	</script>
 </footer>
