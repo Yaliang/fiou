@@ -37,32 +37,32 @@
 				/** parse all of my connection */
 
 				options.callback = function(connections, options) {
+					options = options || {}
+					options.callback = function(userName, userObj, options) {
+
+						/** build the contact item */
+						var userid = userObj.id
+						var contactEle = $(".empty-contact").clone(true)
+						contactEle.attr("data-contact-id",userid)
+						contactEle.attr("data-contact-name",userName)
+						contactEle.removeClass("empty-contact")
+						contactEle.html(userName)
+						$("#contacts-list").append(contactEle)
+
+						/** bind preset functions */
+						if (options.clickEvent) {
+							contactEle.bind("click", options, options.clickEvent)
+						}
+
+						/** sort the contact by contact name */							
+						var prevEle = contactEle.prev()
+						while (prevEle.length > 0 && prevEle.attr("data-contact-name").localeCompare(userName) == 1) {
+							prevEle.before(contactEle)
+							prevEle = contactEle.prev()
+						}
+					}
 					for (var i = 0; i< connections.length; i++) {
 						var target = connections[i].get("target")
-						options = options || {}
-						options.callback = function(userName, userObj) {
-
-							/** build the contact item */
-							var userid = userObj.id
-							var contactEle = $(".empty-contact").clone(true)
-							contactEle.attr("data-contact-id",userid)
-							contactEle.attr("data-contact-name",userName)
-							contactEle.removeClass("empty-contact")
-							contactEle.html(userName)
-							$("#contacts-list").append(contactEle)
-
-							/** bind preset functions */
-							if (options.clickEvent) {
-								contactEle.bind("click", options, options.clickEvent)
-							}
-
-							/** sort the contact by contact name */							
-							var prevEle = contactEle.prev()
-							while (prevEle.length > 0 && prevEle.attr("data-contact-name").localeCompare(userName) == 1) {
-								prevEle.before(contactEle)
-								prevEle = contactEle.prev()
-							}
-						}
 						user.acquireUserNameById(target.id, options)
 					}
 				}
