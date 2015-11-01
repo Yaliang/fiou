@@ -98,11 +98,11 @@
     <gap:splash src="res/screen/android/screen-hdpi-portrait.png"       gap:platform="android" gap:qualifier="port-hdpi" />
     <gap:splash src="res/screen/android/screen-xhdpi-portrait.png"      gap:platform="android" gap:qualifier="port-xhdpi" />
     <gap:splash src="res/screen/blackberry/screen-225.png"              gap:platform="blackberry" /> -->
-    <gap:splash src="./content/png/apple-touch-startup-image-640x1136.png" gap:platform="ios"     width="640" height="1136" />
-    <gap:splash src="./content/png/apple-touch-startup-image-750x1334.png" gap:platform="ios"     width="750" height="1334" />
-    <gap:splash src="./content/png/apple-touch-startup-image-768x1024.png"           gap:platform="ios"     width="768" height="1024" />
-    <gap:splash src="./content/png/apple-touch-startup-image-1242x2208.png" gap:platform="ios"     width="1242" height="2208" />
-    <gap:splash src="./content/png/apple-touch-startup-image-1536x2048.png" gap:platform="ios"     width="1536" height="2048" />
+    <gap:splash src="icon/screen-640x1136.png" gap:platform="ios"     width="640" height="1136" />
+    <gap:splash src="icon/screen-750x1334.png" gap:platform="ios"     width="750" height="1334" />
+    <gap:splash src="icon/screen-768x1024.png"           gap:platform="ios"     width="768" height="1024" />
+    <gap:splash src="icon/screen-1242x2208.png" gap:platform="ios"     width="1242" height="2208" />
+    <gap:splash src="icon/screen-1536x2048.png" gap:platform="ios"     width="1536" height="2048" />
     <!-- <gap:splash src="res/screen/ios/screen-ipad-landscape.png"          gap:platform="ios"     width="1024" height="768" /> -->
     <!-- <gap:splash src="res/screen/windows-phone/screen-portrait.jpg"      gap:platform="winphone" /> -->
 
