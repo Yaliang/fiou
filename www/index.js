@@ -12,6 +12,8 @@ DataService = {
 
 		var User = Parse.Object.extend("User")
 		var query = new Parse.Query(User)
+		//console.log("hhhhh")
+		//console.log(userid)
 		query.get(userid, {
 			success: function(userObj) {
 				// The object was retrieved successfully.
@@ -256,6 +258,49 @@ DataService = {
 						}
 					}
 				})
+			}
+		})
+	},
+	addpaynotif: function(data, options){
+		options = options || {}
+
+		var Notification = Parse.Object.extend("Notification")
+		//var query = new Parse.Query(Notification)
+		var notification = new Notification()
+		notification.set()
+		notification.set("createbywho", data.payer);
+		notification.set("towhom", data.borrower);
+		notification.set("amount", data.amount);
+		//if adding the activity later, please code here
+		notification.set("mark", "unread");
+		notification.set("messagetype", "payment");
+		notification.save(null,{
+			success: function(notification){
+				if(options.callback){
+					options.callback(data.borrower, options)
+				}
+
+			}
+		})
+	},
+
+	addaccumulation: function(touserObj, options){
+		options = options || {}
+		var Accum = Parse.Object.extend("Accumulation")
+		var query = new Parse.Query(Accum)
+		query.equalTo("Userid", touserObj)
+		query.find({
+			success: function(Accumy){
+				if(Accumy.length!=0){
+					Accumy[0].increment("Numofnotice")
+					Accumy[0].save()
+				}
+				else{
+					accum = new Accum()
+					accum.set("Userid", touserObj)
+					accum.set("Numofnotice",1)
+					accum.save()
+				}
 			}
 		})
 	},
@@ -643,4 +688,173 @@ ajaxloader = {
 
 		return obj
 	},
+}
+
+Notice = {
+		type: "",
+		username: "",
+		objid: "",
+	/**
+	 * sign up function
+	 * @return {[type]} [description]
+	 */
+	 getNotifications: function(options) {
+	 	var currentUser = Parse.User.current()
+
+	 	var notification = Parse.Object.extend("Notification")
+
+	 	var query = new Parse.Query(notification)
+	 	query.equalTo("towhom", currentUser)
+	 	query.descending('createdAt')
+
+
+
+	 	console.log("11111111"+notification)
+	 	query.find({
+	 		success:function(notifications)
+	 		{
+	 			if(options.callback){
+	 				options.callback(notifications, options)
+	 			}
+	 		}
+	 	})
+	 	
+		//DataService.getConnectionOfCurrentUser(options)
+		//DataService.getrecordsOfCurrentUser(options)
+	},
+
+	acquireUserNameById : function(userid, options, createtime) {
+		options = options || {}
+		var User = Parse.Object.extend("User")
+		var query = new Parse.Query(User)
+		query.get(userid, {
+			success: function(userObj) {
+				// The object was retrieved successfully.
+				if (options.callback) {
+					options.callback(userObj.getUsername(), userObj,options.time)
+				}
+			},
+			error: function(userObj, error) {
+				// The object was not retrieved successfully.
+				// error is a Parse.Error with an error code and message.
+			}
+		});
+	},
+
+
+	addfriendsnews : function(targetuserid, options){
+		var User = Parse.Object.extend('User')
+		var targetUser = new User()
+		targetUser.id = targetuserid
+		var currentUser = Parse.User.current()
+		var Notification = Parse.Object.extend("Notification")
+		var notification = new Notification();
+		notification.set("createbywho", currentUser);
+		console.log(currentUser)
+		notification.set("towhom", targetUser);
+		console.log(targetUser)
+		notification.set("mark", "unread");
+		notification.set("messagetype", "friends");
+		console.log("11111111")
+		//notification.save()
+		notification.save(null, {
+			success: function(notification)
+			{
+				console.log("level1")
+				var Notificationi = Parse.Object.extend("Notification")
+				var notificationi = new Notificationi();
+				notificationi.set("createbywho", targetUser);
+				notificationi.set("towhom", currentUser);
+				notificationi.set("mark", "unread");
+				notificationi.set("messagetype", "friends");
+				notificationi.save(null, {
+					success: function(notificationi)
+					{
+					var Accum = Parse.Object.extend("Accumulation")
+					var query = new Parse.Query(Accum)
+					query.equalTo("Userid", currentUser)
+					query.find({
+	 					success: function(Accumy){
+	 						var nextOpeTar
+	 						if(Accumy.length!=0){
+	 							Accumy[0].set("Numofnotice", Accumy[0].get("Numofnotice")+1)
+	 							nextOpeTar = Accumy[0]
+	 						}
+	 						else
+	 						{
+	 							var Accumm = new Accum()
+	 							Accumm.set("Userid",currentUser)
+	 							Accumm.set("Numofnotice",1)
+	 							nextOpeTar = Accumm
+	 						}
+	 						nextOpeTar.save(null, {
+	 							success: function(Accum)
+	 							{
+
+	 							var Accumi = Parse.Object.extend("Accumulation")
+	 							var queryi = new Parse.Query(Accumi)
+	 							queryi.equalTo("Userid", targetUser)
+	 							queryi.find({
+	 								success:function(Accumiy)
+	 								{
+	 									if(Accumiy.length!=0){
+	 										Accumiy[0].set("Numofnotice", Accumiy[0].get("Numofnotice")+1)
+	 										Accumiy[0].save()
+	 									}
+	 									else{
+	 										Accumii = new Accumi()
+	 										Accumii.set("Userid",targetUser)
+	 										Accumii.set("Numofnotice",1)
+	 										Accumii.save()
+	 									}
+	 		
+	 								}
+	 							})
+
+	 						}
+	 						})
+	 				}
+	 	})
+					console.log("level2")
+				}
+
+				})
+					console.log("level1")
+
+				}
+			})
+		},
+
+	// sort : function(notifications)
+	// {
+	// 	notifications.sort(
+	// 		function(a,b){
+
+	// 		})
+	// }
+}
+
+Accumulation = {
+
+	getcurrentuseraccu : function(options){
+		
+		options = options || {}
+		var currentUser = Parse.User.current()
+
+		var accumulation = Parse.Object.extend("Accumulation")
+		var query = new Parse.Query(accumulation)
+
+		var number = 0
+
+	    query.equalTo("Userid",currentUser)
+
+	    query.find({
+			success: function(accumulation) {
+				if(accumulation.length != 0)
+				{
+					options.callback(accumulation,options)				
+		    }
+			}
+		})
+	}
 }

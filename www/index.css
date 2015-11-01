@@ -20,15 +20,24 @@
 }
 
 .home-body-pad {
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 30px;
+    padding-bottom: 30px;
     border: 1px solid #fff;
     text-shadow: 0 0 0;
 }
 
 .home-body-pad:hover {
     color:#fff;
-    background-color:#563d7c;
+    background-color:#337ab7;
+}
+
+.user-block {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-shadow: 0 0 0;
+    font-weight: 300;
+    border-radius: 3px;
+    padding-bottom: 2px;
 }
 
 .header-btn {
@@ -44,7 +53,21 @@
 .empty {
     display: none !important;
 }
-
+.empty-notification {
+    display: none !important;
+}
+.mark-element
+{  
+    position: absolute !important;
+    top:10px !important;
+    right: 10px !important;
+    background-color:#337ab7!important;
+}
+.glyphicon-exclamation-sign{
+    right: 0px;
+    top: 0px;
+    color: #337ab7;
+}
 .ui-page-active {
     z-index: 98;
 }
@@ -52,3 +75,4 @@
 .header-btn {
     font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+

@@ -364,6 +364,7 @@ var QRCode;
 			this._elImage = document.createElement("img");
 			this._elImage.alt = "Scan me!";
 			this._elImage.style.display = "none";
+			this._elImage.style.margin = "auto";
 			this._el.appendChild(this._elImage);
 			this._bSupportDataURI = null;
 		};

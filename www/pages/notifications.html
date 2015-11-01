@@ -1,0 +1,129 @@
+<title>FIOU</title>
+<pageid>notifications</pageid>
+
+<header>
+	<h1>Notifications</h1>
+	<a class="header-btn" href='#' data-href='' data-nav='back'>
+		<span class="glyphicon glyphicon-chevron-left" data-nav='back' aria-hidden="true"></span>Back
+	</a>
+</header>
+<main>
+	<ul class="list-group" id="notifications-list">
+		<li class="list-group-item empty-notification notification-item" data-notification-id="" data-notification-name="" data-notification-createtime="" data-notification-amount="" data-notification-type="">
+			<span class='glyphicon glyphicon-exclamation-sign pull-right hidden' aria-hidden='true'></span>
+        </li>
+	</ul>
+</main>
+<contentAttrOverscroll>true</contentAttrOverscroll>
+<footer>
+	<script type="text/javascript">
+
+		notificationsJS = {
+			buildList : function(options) { //what's options?
+				options = options || {}
+				options.callback = function(notifications, options) {
+					//Notice.sort(notifications)
+					for (var i = 0; i< notifications.length; i++) {
+						//console.log(content)
+						var target = notifications[i].get("createbywho")
+						var createtime = notifications[i].get("createdAt")
+						var ntid = notifications[i].id
+						var mark = notifications[i].get("mark")
+						var options = {}
+						options.time = createtime
+						options.mark = mark
+						options.notifi = notifications[i]//what's this?
+						options.amount = notifications[i].get("amount")
+						options.type = notifications[i].get("messagetype")
+						//console.log("!!!"+createtime)
+						options = options || {}
+							//var userObj = target
+					    var userid = target.id
+						var NotcieEle = $(".empty-notification").clone(true)
+						NotcieEle.attr("data-notification-id",ntid)
+						//NotcieEle.attr("data-notification-name",userName)
+						NotcieEle.attr("data-notification-time",options.time)
+						NotcieEle.attr("data-notification-mark",options.mark)
+						NotcieEle.attr("data-notification-amount",options.amount)
+						NotcieEle.attr("data-notification-type",options.type)
+						NotcieEle.removeClass("empty-notification")
+						
+						$("#notifications-list").append(NotcieEle)
+						/** bind preset functions */
+						if (options.clickEvent) {
+							NotcieEle.bind("click", options, options.clickEvent)
+						}
+						
+						//user.acquireUserNameById(target.id, options)
+
+					}
+					for (var i = 0; i< notifications.length; i++){
+						var targeti = notifications[i].get("createbywho")
+
+						user.acquireUserNameById(targeti.id, {
+							time: notifications[i].get("createdAt"),
+							mark: notifications[i].get("mark"),
+							amount: notifications[i].get("amount"),
+							type: notifications[i].get("messagetype"),
+							notifi: notifications[i],
+							callback: function(userName, userobj, options){
+								console.log('WE GET USERNAME %s', options.notifi.id)
+								var NotcieEle = $(".notification-item[data-notification-id='"+options.notifi.id+"']")
+								console.log(NotcieEle)
+								NotcieEle.attr("data-notification-name",userName)
+								if(options.type == "friends"){
+									NotcieEle.append("<span><p><span class='user-block btn-info'>"+userName+"</span> has been your friends successfully."+"</p><p class='small' style='text-align: right'>Friend "+options.time.toLocaleString()+"</p>"+"</span>")
+								}
+								else{
+									NotcieEle.append("<span><p><span class='user-block btn-info'>"+userName+"</span> has borrowed you $"+options.amount.toFixed(2)+"."+"</p><p class='small' style='text-align:right'>Payment "+options.time.toLocaleString()+"</p>"+"</span>")
+								}
+								if(options.mark == "unread")
+								{
+									NotcieEle.find(".hidden").removeClass("hidden")
+									options.notifi.set("mark","read")
+									options.notifi.save()
+									options.mark = "read"
+									NotcieEle.attr("data-notification-mark",options.mark)
+								}
+
+							}
+						})
+
+					}
+				}
+				Notice.getNotifications(options)
+			},
+			reset: function() {
+				var NotcieEle = $(".empty-notification").clone(true)
+				$("#notifications-list").html("")
+				$("#notifications-list").append(NotcieEle)
+			},
+		}
+
+		$(document).on("pagebeforeshow", "#notifications", function() {
+			console.log(" before show")
+			notificationsJS.reset()
+			var options = {}
+			options.callback = function(accumulation,options)
+			{
+				accumulation[0].set("Numofnotice" , 0)
+				accumulation[0].save()
+			}
+			Accumulation.getcurrentuseraccu(options)
+
+		})
+
+		$(document).on("pageshow", "#notifications", function() {
+			console.log("show")
+			if (ajaxloader.callback) {
+				console.log("a callback has set")
+			} else {
+				notificationsJS.buildList()
+			}
+		})
+
+		user.autologin({
+			dest: "@current"
+		})
+	</script>
+</footer>
