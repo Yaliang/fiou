@@ -587,6 +587,19 @@
 													activity.checkPendings(options)
 												}
 											})
+											DataService.addpaynotif({
+												/** data **/
+												payer: recordObj.get("payer"),
+												borrower: recordObj.get("borrower"),
+												amount: recordObj.get("amount"), 
+											}, {
+												/** options **/
+												//options: options.records//??????????????
+												callback: function(touserobj, options) {
+													
+													DataService.addaccumulation(touserobj, options)
+												}
+											})
 										}
 									})
 								}

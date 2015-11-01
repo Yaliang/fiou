@@ -45,18 +45,25 @@
 					}
 				})
 				$("#connect-btn").html("Add Connection")
-				$("#connect-btn").bind("click", userid, function(event) {
+				$("#connect-btn").bind("click", userid, function(event) {//What's the Userid for?
 					$("#connect-btn").unbind("click")
 					$("#connect-btn").attr("disabled", "disabled")
 					$("#connect-btn").html("Working...")
-					user.addConnect(event.data, {
+					user.addConnect(event.data, {//is the userid the event.data?
 						callback: function() {
+							console.log("level0")
+							//n is a pointer point to a object in User with the object ID == userid
+							Notice.addfriendsnews(event.data);
 							$("#connect-btn").removeAttr("disabled")
 							$("#connect-btn").html("Done")
 							$("#connect-btn").bind("click", function(event) {
 								$("#connect-btn").unbind("click")
 								pt.loadPage("home")
+
 							})
+							//Add the this to notifications
+							// userid is the target's id
+							//Notice.addfriendsnews(userid,options);
 						}
 					})
 				})

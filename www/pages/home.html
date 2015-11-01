@@ -12,11 +12,12 @@
 			</div>
 			<div class="text-center extra-small">Add</div>
 		</div>
-		<div class="col-xs-3 home-body-pad">
+		<div class="col-xs-3 home-body-pad" onclick="homeJS.onNotifications()">
 			<div class="text-center">
+				<span class='mark-element badge hidden' aria-hidden='true'></span>
 				<span class="glyphicon glyphicon-envelope text-center" aria-hidden="true"></span>
 			</div>
-			<div class="text-center extra-small">Message</div>
+			<div class="text-center extra-small">Notification</div>
 		</div>
 		<div class="col-xs-3 home-body-pad" onclick="pt.loadPage('summary')">
 			<div class="text-center">
@@ -55,13 +56,41 @@
 			<div class="text-center extra-small">Logout</div>
 		</div>
 	</div>
+	<!-- <div id="content"></div>
+        <div>
+            <span id="status">Connecting...</span>
+            <input type="text" id="input" disabled="disabled" data-enhance="false"/>
+        </div> -->
 
 </main>
 <contentAttrOverscroll>true</contentAttrOverscroll>
 <footer>
 	<script type="text/javascript">
 		user.autologin()
+		function notificationfresh() {
+			var options = {}
 
+			
+			Accumulation.getcurrentuseraccu(options)
+
+			//Wssocket.socketclient();
+			options.callback=function(accumulation,options) {
+				number = accumulation[0].get("Numofnotice")
+				if(number!=0) {
+	        		$(".mark-element").removeClass("hidden")
+	        		$(".mark-element").html(number)
+	        	} else {
+	        		$(".mark-element").addClass("hidden")
+        		}
+			}
+		}
+
+		var time = 1000*1;
+		var noticeRefreshInterval = setInterval(notificationfresh, time)
+
+		$(document).on("pagebeforeshow", "#home", function() {
+			notificationfresh()
+		})
 
 		homeJS = {
 			onContacts : function() {
@@ -69,6 +98,13 @@
 					contacts.buildList()
 				}
 				pt.loadPage('contacts')
+			},
+
+			onNotifications : function() {
+				ajaxloader.callback = function() {
+					notificationsJS.buildList()
+				}
+				pt.loadPage('notifications')
 			}
 		}
 	</script>
